@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Issue
+    about: Issue template
+    url: https://github.com/givery-bootcamp/dena-2024-team11/issues/new?template=issue.md&projects=givery-bootcamp/51
