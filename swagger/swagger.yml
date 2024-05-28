@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: 
+  version: 0.0.0
+servers:
+  - url: http://localhost:9000
+    description: local server
+paths:
+  /users:
+    get:
+      summary: Returns a list of users.
+      description: Optional extended description in CommonMark or HTML.
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
+  /posts:
+    get:
+      summary: 全ての投稿をリストで返す
+      description:
+      responses:
+        '200':
+          description: 投稿のJSON配列
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: object
+                  required:
+                  - id
+                  - user_id
+                  - content
+                  - created_at
+                  - updated_at
+                  properties:
+                    id:
+                      type: string
+                    user_id:
+                      type: string
+                    content:
+                      type: string
+                    created_at:
+                      type: date
+                    updated_at:
+                      type: date
+    post:
+      summary: 投稿を作成する
+      description: 
+      requestBody:
+        description: 
+        required: true
+        content:
+          application/json:
+              schema: 
+                type: object
+                required:
+                - user_id
+                - content
+                properties:
+                  user_id:
+                    type: string
+                  content:
+                    type: string
+      responses:
+        '201':
+          description: 投稿のJSON
+          content:
+            application/json:
+              schema: 
+                type: object
+                required:
+                - id
+                - user_id
+                - content
+                - created_at
+                - updated_at
+                properties:
+                  id:
+                    type: string
+                  user_id:
+                    type: string
+                  content:
+                    type: string
+                  created_at:
+                    type: date
+                  updated_at:
+                    type: date
