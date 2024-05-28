@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
+import { useState } from 'react';
 
 type Post = {
   name: string;
@@ -51,9 +52,48 @@ export function PostList({ posts }: PostProps) {
 }
 
 export function InputBox() {
-  return <div>Hello world!</div>;
+  const [filterText, setFilterText] = useState('');
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    alert('送信内容: ' + filterText);    
+  }
+    
+  return (
+    <form onSubmit={handleSubmit}>
+    <input 
+      type="text" 
+      value={filterText} 
+      placeholder="Search..."
+      onChange={(e) => setFilterText(e.target.value)}
+    />
+    <input
+      type="submit"
+      value="Submit"
+      
+
+    />
+      
+    {/* <label>
+      <input 
+        type="checkbox" 
+        checked={inStockOnly} />
+      {' '}
+      Only show products in stock
+    </label> */}
+  </form>
+  );
 }
 
 export function PostItem({ post }: PostItemProps) {
-  return <div></div>;
+  return (
+        <div>
+          {post.name}
+          <MessageItem str={post.message}/>
+        </div>
+  );
+
+}
+
+export function MessageItem ({str} : {str:string}) {
+  return <div>{str}</div>
 }
