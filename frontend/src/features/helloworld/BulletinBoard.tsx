@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useReducer } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
@@ -17,21 +17,34 @@ type PostItemProps = {
   post: Post;
 };
 
+type InputBoxProps = {
+  dispatch: React.Dispatch<PostReducerAction>
+}
+
+type PostReducerAction = {
+  type: string;
+  message: string;
+};
+
+const initialPosts: Post[] = [
+  {
+    name: "Toma",
+    message: "とてもいい掲示板です。",
+  },
+  {
+    name: "Chono",
+    message: "そうは思わない",
+  },
+];
+
 export function BulletinBoard() {
-  const posts: Post[] = [
-    {
-      name: "Toma",
-      message: "とてもいい掲示板です。",
-    },
-    {
-      name: "Chono",
-      message: "そうは思わない",
-    },
-  ];
+  const [posts, dispatch] = useReducer(postsReducer, initialPosts);
+ // const [posts, setPosts] = useState(initialPosts);
+  
   return (
     <>
       <PostList posts={posts} />
-      <InputBox />
+      <InputBox dispatch={dispatch}/>
     </>
   );
   // const { hello } = useAppSelector((state) => state.hello);
@@ -42,20 +55,38 @@ export function BulletinBoard() {
   // return <div>{hello?.message}</div>;
 }
 
+function postsReducer(posts: Post[], action: PostReducerAction): Post[] {
+  if(action.type === 'post') {
+    return [
+      ...posts,
+      {
+        name: "Toma",
+        message: action.message,
+      }
+    ];
+  } else {
+    throw Error('Unknown action: ' + action.type);
+  }
+}
+
 export function PostList({ posts }: PostProps) {
-  const postListItems = posts.map((post) => (
-    <li>
+  const postListItems = posts.map((post, id) => (
+    <li id={id.toString()}>
       <PostItem post={post} />
     </li>
   ));
   return <ul>{postListItems}</ul>;
 }
 
-export function InputBox() {
+export function InputBox({ dispatch }: InputBoxProps) {
   const [filterText, setFilterText] = useState('');
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    alert('送信内容: ' + filterText);    
+    dispatch({
+      type: 'post',
+      message: filterText,
+    });
+    setFilterText("");
   }
     
   return (
