@@ -3,50 +3,28 @@ import { useReducer } from "react";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
 import { useState } from 'react';
-
-type Post = {
-  name: string;
-  message: string;
-};
+import { BoardElement } from "../../shared/models";
 
 type PostProps = {
-  posts: Post[];
+  posts: BoardElement[];
 };
 
 type PostItemProps = {
-  post: Post;
+  post: BoardElement;
 };
-
-type InputBoxProps = {
-  dispatch: React.Dispatch<PostReducerAction>
-}
-
-type PostReducerAction = {
-  type: string;
-  message: string;
-};
-
-const initialPosts: Post[] = [
-  {
-    name: "Toma",
-    message: "とてもいい掲示板です。",
-  },
-  {
-    name: "Chono",
-    message: "そうは思わない",
-  },
-];
 
 export function BulletinBoard() {
-  const [posts, dispatch] = useReducer(postsReducer, initialPosts);
+  // const [posts, dispatch] = useReducer(postsReducer, initialPosts);
  // const [posts, setPosts] = useState(initialPosts);
-  
+  const { posts } = useAppSelector((state) => state.posts);
   return (
     <>
       <PostList posts={posts} />
-      <InputBox dispatch={dispatch}/>
+      <InputBox/>
     </>
   );
+
+
   // const { hello } = useAppSelector((state) => state.hello);
   // const dispatch = useAppDispatch();
   // useEffect(() => {
@@ -55,37 +33,21 @@ export function BulletinBoard() {
   // return <div>{hello?.message}</div>;
 }
 
-function postsReducer(posts: Post[], action: PostReducerAction): Post[] {
-  if(action.type === 'post') {
-    return [
-      ...posts,
-      {
-        name: "Toma",
-        message: action.message,
-      }
-    ];
-  } else {
-    throw Error('Unknown action: ' + action.type);
-  }
-}
-
 export function PostList({ posts }: PostProps) {
   const postListItems = posts.map((post, id) => (
-    <li id={id.toString()}>
+    <li key={id.toString()}>
       <PostItem post={post} />
     </li>
   ));
   return <ul>{postListItems}</ul>;
 }
 
-export function InputBox({ dispatch }: InputBoxProps) {
+export function InputBox() {
   const [filterText, setFilterText] = useState('');
+  const dispatch = useAppDispatch();
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    dispatch({
-      type: 'post',
-      message: filterText,
-    });
+    dispatch(APIService.postBoard(filterText));
     setFilterText("");
   }
     
@@ -128,3 +90,4 @@ export function PostItem({ post }: PostItemProps) {
 export function MessageItem ({str} : {str:string}) {
   return <div>{str}</div>
 }
+
