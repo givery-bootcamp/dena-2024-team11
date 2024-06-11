@@ -8,10 +8,6 @@ import (
 	"testing"
 )
 
-func init() {
-	external.SetupDB()
-}
-
 func setupHelloWorld() (interfaces.HelloWorldRepository, func()) {
 	db := external.DB.Begin()
 	repo := repositories.NewHelloWorldRepository(db)
