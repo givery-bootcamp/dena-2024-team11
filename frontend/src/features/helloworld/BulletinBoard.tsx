@@ -14,6 +14,10 @@ type PostItemProps = {
   post: BoardElement;
 };
 
+type PlaceProps = {
+  parentId: number;
+};
+
 export function BulletinBoard() {
   // const [posts, dispatch] = useReducer(postsReducer, initialPosts);
  // const [posts, setPosts] = useState(initialPosts);
@@ -22,10 +26,10 @@ export function BulletinBoard() {
     <div className="bulletin-with-thread">
       <div className="bulletin-board">
         <PostList posts={posts} />
-        <InputBox/>
+        <InputBox parentId={-1}/>
       </div>
       <div>
-        <MessageThread/>
+        <MessageThread parentId={0}/>
       </div>
     </div>
   );
@@ -48,12 +52,16 @@ export function PostList({ posts }: PostProps) {
   return <ul>{postListItems}</ul>;
 }
 
-export function InputBox() {
-  const [filterText, setFilterText] = useState('');
+export function InputBox({parentId}: PlaceProps) {
+  const [filterText, setFilterText] = useState(''); 
   const dispatch = useAppDispatch();
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    dispatch(APIService.postBoard(filterText));
+    if (parentId > -1) {
+      dispatch(APIService.postReply({message: filterText, parentId: parentId}));
+    } else {
+      dispatch(APIService.postBoard(filterText));
+    }
     setFilterText("");
   }
     

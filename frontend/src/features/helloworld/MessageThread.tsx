@@ -1,7 +1,11 @@
 import { InputBox } from "./BulletinBoard"
 
-export function MessageThread() {
+type MessageThreadProps = {
+    parentId: number;
+};
+
+export function MessageThread({parentId}: MessageThreadProps) {
     return (
-    <InputBox/>
+    <InputBox parentId={parentId}/>
     );
 }
