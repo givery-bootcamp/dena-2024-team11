@@ -5,6 +5,7 @@ import { APIService } from "../../shared/services";
 import { useState } from 'react';
 import { BoardElement } from "../../shared/models";
 import { MessageThread } from "./MessageThread";
+import { actions } from "../../shared/store";
 
 type PostProps = {
   posts: BoardElement[];
@@ -14,8 +15,8 @@ type PostItemProps = {
   post: BoardElement;
 };
 
-type PlaceProps = {
-  parentId: number;
+type InputBoxProps = {
+  parentId: number | null;
 };
 
 export function BulletinBoard() {
@@ -23,7 +24,9 @@ export function BulletinBoard() {
  // const [posts, setPosts] = useState(initialPosts);
   const { posts } = useAppSelector((state) => state.posts);
   const noparents = posts.filter((post) => post.parentId === -1);
-  const zeroparents = posts.filter((post) => post.parentId === 0);
+  const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
+  const zeroparents = posts.filter((post) => post.parentId === selectedThreadId);
+  
   return (
     <div className="bulletin-with-thread">
       <div className="bulletin-board">
@@ -32,7 +35,7 @@ export function BulletinBoard() {
       </div>
       <div>
         <PostList posts={zeroparents} />
-        <InputBox parentId={0}/>        
+        <InputBox parentId={selectedThreadId}/>        
       </div>
     </div>
   );
@@ -55,11 +58,14 @@ export function PostList({ posts }: PostProps) {
   return <ul>{postListItems}</ul>;
 }
 
-export function InputBox({parentId}: PlaceProps) {
+export function InputBox({parentId}: InputBoxProps) {
   const [filterText, setFilterText] = useState(''); 
   const dispatch = useAppDispatch();
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (parentId === null) {
+      return;
+    }
     if (parentId > -1) {
       dispatch(APIService.postReply({message: filterText, parentId: parentId}));
     } else {
@@ -67,7 +73,9 @@ export function InputBox({parentId}: PlaceProps) {
     }
     setFilterText("");
   }
-    
+  if (parentId === null) {
+    return <div></div>;
+  } 
   return (
     <form onSubmit={handleSubmit}>
     <input 
@@ -95,11 +103,21 @@ export function InputBox({parentId}: PlaceProps) {
 }
 
 export function PostItem({ post }: PostItemProps) {
+  const dispatch = useAppDispatch();
+  // function resetParentId() {
+  //   return post.parentId;
+  // }
   return (
         <div>
           {post.id} -&gt; {post.parentId}: 
           {post.name}
           <MessageItem str={post.message}/>
+          {post.parentId === -1 && <button onClick={e => {
+            dispatch(actions.SelectThread(post.id))
+
+          
+          }}>Reply</button>}
+
         </div>
   );
 
