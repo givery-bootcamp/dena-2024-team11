@@ -111,10 +111,8 @@ export function PostItem({ post }: PostItemProps) {
           {post.id} -&gt; {post.parentId}: 
           {post.name}
           <MessageItem str={post.message}/>
-          {post.parentId === -1 && <button onClick={e => {
-            dispatch(actions.SelectThread(post.id))
-
-          
+          {post.parentId === -1 && <button onClick={() => {
+            dispatch(actions.SelectThread(post.id));
           }}>Reply</button>}
 
         </div>
