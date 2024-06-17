@@ -1,10 +1,8 @@
-import { useReducer } from "react";
 import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
 import { useState } from 'react';
 import { BoardElement } from "../../shared/models";
-import { MessageThread } from "./MessageThread";
 import { actions } from "../../shared/store";
 
 type PostProps = {
