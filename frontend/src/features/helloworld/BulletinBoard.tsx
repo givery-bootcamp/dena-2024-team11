@@ -60,7 +60,7 @@ export function PostList({ posts }: PostProps) {
 }
 
 export function InputBox({parentId}: InputBoxProps) {
-  const [filterText, setFilterText] = useState(''); 
+  const [filterText, setFilterText] = useState('');
   const dispatch = useAppDispatch();
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

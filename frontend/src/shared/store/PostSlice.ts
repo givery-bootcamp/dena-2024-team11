@@ -7,8 +7,6 @@ export type BoardState = {
     posts: BoardElement[];
 };
 
-
-
 export const initialState: BoardState = {
     posts: [],
 };

@@ -1,6 +1,30 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
 import { BoardElement, Hello } from '../models';
+
+type DbPost = {
+  id: number;
+  user: {
+    id: number;
+    name: string;
+    icon: string;
+  },
+  content: string;
+  created_at: string;
+  updated_at: string;
+  num_replies: number;
+};
+
+type DbReply = {
+  id: number;
+  user: {
+    id: number;
+    name: string;
+    icon: string;
+  },
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
 
 const API_ENDPOINT_PATH =
   import.meta.env.VITE_API_ENDPOINT_PATH ?? '';
@@ -10,64 +34,82 @@ export const getHello = createAsyncThunk<Hello>('getHello', async () => {
   return await response.json();
 });
 
-//parentIdが-1のポストは親を持たない
-const boardElementData: BoardElement[] = [
-  {
-    id: 0,
-    name: "Toma",
-    message: "とてもいい掲示板です。",
-    parentId: -1,
-  },
-  {
-    id: 1,
-    name: "Chono",
-    message: "そうは思わない",
-    parentId: -1,
-  },
-  {
-    id: 2,
-    name: "Toma",
-    message: "なんで？",
-    parentId: -1,
-  }
-]
-
 export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',async (message) => {
-    // await fetch(`${API_ENDPOINT_PATH}/board`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ message }),
-    // });
-    const boardElementsSize = boardElementData.length;
-    const nextId =  boardElementsSize;
-    boardElementData.push({
-      id: nextId,
-      name: "Toma",
-      message: message,
-      parentId: -1,
+    const postResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        user_id: 0,
+        content: message,
+       }),
     });
+
+    if(!postResponse.ok) {
+      console.log("post error");
+      return [];
+    }
+
+    const getResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
+      method: 'GET',
+    });
+
+    if(!getResponse.ok) {
+      console.log("get error");
+      return [];
+    }
+
+    const getResponseObj: DbPost[] = await getResponse.json();
+
+    const boardElementData = getResponseObj.map(dbPost => {
+      const newElement = {
+        id: dbPost.id,
+        name: dbPost.user.name,
+        message: dbPost.content,
+        parentId: -1,
+      }
+      return newElement;
+    })
     return boardElementData;
   }
 );
 
 export const postReply = createAsyncThunk<BoardElement[], {message: string; parentId: number}>('postReply', async ({message, parentId}) => {
-  // 本当はAPIを叩いて、replyを追加する
-  // await fetch(`${API_ENDPOINT_PATH}/board`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({ message }),
-  // });
-  const boardElementsSize = boardElementData.length;
-  const nextId =  boardElementsSize;
-  boardElementData.push({
-    id: nextId,
-    name: "Chono",
-    message: message,
-    parentId: parentId,
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/replies`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      post_id: parentId,
+      user_id: 0,
+      content: message,
+     }),
   });
+  if(!postResponse.ok) {
+    console.log("post error");
+    return [];
+  }
+
+  const params = {
+    post_id: parentId.toString()
+  };
+  const queryParams = new URLSearchParams(params);
+  const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies` + queryParams);
+  if(!getResponse.ok) {
+    console.log("get error");
+    return [];
+  }
+  const getResponseObj: DbReply[] = await getResponse.json();
+  const boardElementData = getResponseObj.map(dbReply => {
+    const newReply = {
+      id: dbReply.id,
+      name: dbReply.user.name,
+      message: dbReply.content,
+      parentId: parentId,
+    };
+    return newReply;
+  })
   return boardElementData;
 });
