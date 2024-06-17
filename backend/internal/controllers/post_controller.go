@@ -2,21 +2,13 @@ package controllers
 
 import (
 	"errors"
+	"myapp/internal/controllers/response"
 	"myapp/internal/repositories"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Post struct {
-	Id      int `json:"id"`
-	Content string `json:"content"`
-	UserId  string `json:"user_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
 
-type GetPostsResponse []*Post
 
 func GetPosts(ctx *gin.Context) {
 	repository := repositories.NewPostRepository(DB(ctx))
@@ -24,17 +16,14 @@ func GetPosts(ctx *gin.Context) {
 	if err != nil { 
 		handleError(ctx, 500, err)
 	} else if posts != nil {
-		response := GetPostsResponse{}
+
+		res := response.GetPostsResponse{}
 		for _, post := range posts {
-			response = append(response, &Post{
-				Id: post.Id,	
-				Content: post.Content,
-				UserId: post.UserId,
-				CreatedAt: post.CreatedAt,
-				UpdatedAt: post.UpdatedAt,
-			})
+			postResponse := response.Post{}
+			postResponse.CreateWith(*post,len(post.Replies))
+			res = append(res, &postResponse)
 		}
-			ctx.JSON(200, response)
+			ctx.JSON(200, res)
 	} else {
 		handleError(ctx, 404, errors.New("not found"))
 	}
