@@ -22,7 +22,11 @@ export const postSlice = createSlice({
         builder.addCase(APIService.postBoard.fulfilled, (state, action) => {
             state.posts = [...action.payload];
         });
+        builder.addCase(APIService.postReply.fulfilled, (state, action) => {
+            state.posts = [...action.payload];
+        });
     },
+    
 });
 
 export default postSlice.reducer;
