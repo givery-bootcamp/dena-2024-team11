@@ -1,9 +1,11 @@
 import { useReducer } from "react";
-
+import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
 import { useState } from 'react';
 import { BoardElement } from "../../shared/models";
+import { MessageThread } from "./MessageThread";
+import { actions } from "../../shared/store";
 
 type PostProps = {
   posts: BoardElement[];
@@ -13,15 +15,30 @@ type PostItemProps = {
   post: BoardElement;
 };
 
+type InputBoxProps = {
+  parentId: number | null;
+};
+
 export function BulletinBoard() {
   // const [posts, dispatch] = useReducer(postsReducer, initialPosts);
  // const [posts, setPosts] = useState(initialPosts);
   const { posts } = useAppSelector((state) => state.posts);
+  const noparents = posts.filter((post) => post.parentId === -1);
+  const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
+  const zeroparents = posts.filter((post) => post.parentId === selectedThreadId);
+  const parentPost = posts.filter((post) => post.id === selectedThreadId);
   return (
-    <>
-      <PostList posts={posts} />
-      <InputBox/>
-    </>
+    <div className="bulletin-with-thread">
+      <div className="bulletin-board">
+        <PostList posts={noparents} />
+        <InputBox parentId={-1}/>
+      </div>
+      <div>
+        <PostList posts={parentPost}/>
+        <PostList posts={zeroparents} />
+        <InputBox parentId={selectedThreadId}/>        
+      </div>
+    </div>
   );
 
 
@@ -42,15 +59,24 @@ export function PostList({ posts }: PostProps) {
   return <ul>{postListItems}</ul>;
 }
 
-export function InputBox() {
-  const [filterText, setFilterText] = useState('');
+export function InputBox({parentId}: InputBoxProps) {
+  const [filterText, setFilterText] = useState(''); 
   const dispatch = useAppDispatch();
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    dispatch(APIService.postBoard(filterText));
+    if (parentId === null) {
+      return;
+    }
+    if (parentId > -1) {
+      dispatch(APIService.postReply({message: filterText, parentId: parentId}));
+    } else {
+      dispatch(APIService.postBoard(filterText));
+    }
     setFilterText("");
   }
-    
+  if (parentId === null) {
+    return <div></div>;
+  } 
   return (
     <form onSubmit={handleSubmit}>
     <input 
@@ -78,10 +104,21 @@ export function InputBox() {
 }
 
 export function PostItem({ post }: PostItemProps) {
+  const dispatch = useAppDispatch();
+  // function resetParentId() {
+  //   return post.parentId;
+  // }
   return (
         <div>
+          {post.id} -&gt; {post.parentId}: 
           {post.name}
           <MessageItem str={post.message}/>
+          {post.parentId === -1 && <button onClick={e => {
+            dispatch(actions.SelectThread(post.id))
+
+          
+          }}>Reply</button>}
+
         </div>
   );
 
