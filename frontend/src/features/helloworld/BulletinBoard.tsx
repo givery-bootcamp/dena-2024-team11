@@ -86,6 +86,7 @@ export function InputBox() {
 export function PostItem({ post }: PostItemProps) {
   return (
         <div>
+          {post.id} -&gt; {post.parentId}: 
           {post.name}
           <MessageItem str={post.message}/>
         </div>

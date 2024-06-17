@@ -11,7 +11,7 @@ export const getHello = createAsyncThunk<Hello>('getHello', async () => {
 });
 
 //parentIdが-1のポストは親を持たない
-const boardElementData = [
+const boardElementData: BoardElement[] = [
   {
     id: 0,
     name: "Toma",
