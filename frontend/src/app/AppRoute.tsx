@@ -1,11 +1,11 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route } from "react-router-dom";
 
-import { HelloWorld } from '../features/helloworld';
+import { BulletinBoard } from "../features/helloworld";
 
 export const AppRoute = () => {
   return (
     <Routes>
-      <Route path="/" element={<HelloWorld />} />
+      <Route path="/" element={<BulletinBoard />} />
     </Routes>
   );
 };
