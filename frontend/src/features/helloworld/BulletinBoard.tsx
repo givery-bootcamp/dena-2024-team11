@@ -1,9 +1,10 @@
 import { useReducer } from "react";
-
+import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
 import { useState } from 'react';
 import { BoardElement } from "../../shared/models";
+import { MessageThread } from "./MessageThread";
 
 type PostProps = {
   posts: BoardElement[];
@@ -18,10 +19,15 @@ export function BulletinBoard() {
  // const [posts, setPosts] = useState(initialPosts);
   const { posts } = useAppSelector((state) => state.posts);
   return (
-    <>
-      <PostList posts={posts} />
-      <InputBox/>
-    </>
+    <div className="bulletin-with-thread">
+      <div className="bulletin-board">
+        <PostList posts={posts} />
+        <InputBox/>
+      </div>
+      <div>
+        <MessageThread/>
+      </div>
+    </div>
   );
 
 
