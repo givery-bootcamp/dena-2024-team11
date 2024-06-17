@@ -32,6 +32,7 @@ $ docker-compose up
 
 - backend: `http://localhost:9000`
 - frontend: `http://localhost:3000`
+- APIドキュメント: `http://localhost:8002`
 
 でWebサーバが起動します。
 
