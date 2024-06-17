@@ -22,14 +22,17 @@ export function BulletinBoard() {
   // const [posts, dispatch] = useReducer(postsReducer, initialPosts);
  // const [posts, setPosts] = useState(initialPosts);
   const { posts } = useAppSelector((state) => state.posts);
+  const noparents = posts.filter((post) => post.parentId === -1);
+  const zeroparents = posts.filter((post) => post.parentId === 0);
   return (
     <div className="bulletin-with-thread">
       <div className="bulletin-board">
-        <PostList posts={posts} />
+        <PostList posts={noparents} />
         <InputBox parentId={-1}/>
       </div>
       <div>
-        <MessageThread parentId={0}/>
+        <PostList posts={zeroparents} />
+        <InputBox parentId={0}/>        
       </div>
     </div>
   );
