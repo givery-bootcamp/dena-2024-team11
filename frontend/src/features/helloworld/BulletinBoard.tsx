@@ -26,7 +26,7 @@ export function BulletinBoard() {
   const noparents = posts.filter((post) => post.parentId === -1);
   const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
   const zeroparents = posts.filter((post) => post.parentId === selectedThreadId);
-  
+  const parentPost = posts.filter((post) => post.id === selectedThreadId);
   return (
     <div className="bulletin-with-thread">
       <div className="bulletin-board">
@@ -34,6 +34,7 @@ export function BulletinBoard() {
         <InputBox parentId={-1}/>
       </div>
       <div>
+        <PostList posts={parentPost}/>
         <PostList posts={zeroparents} />
         <InputBox parentId={selectedThreadId}/>        
       </div>
