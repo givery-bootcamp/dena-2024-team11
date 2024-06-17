@@ -51,3 +51,23 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
     return boardElementData;
   }
 );
+
+export const postReply = createAsyncThunk<BoardElement[], {message: string; parentId: number}>('postReply', async ({message, parentId}) => {
+  // 本当はAPIを叩いて、replyを追加する
+  // await fetch(`${API_ENDPOINT_PATH}/board`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({ message }),
+  // });
+  const boardElementsSize = boardElementData.length;
+  const nextId =  boardElementsSize;
+  boardElementData.push({
+    id: nextId,
+    name: "Chono",
+    message: message,
+    parentId: parentId,
+  });
+  return boardElementData;
+});
