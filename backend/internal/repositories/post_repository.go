@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"myapp/internal/entities"
-	"time"
+	"myapp/internal/repositories/dao"
 
 	"gorm.io/gorm"
 )
@@ -11,13 +11,6 @@ type PostRepository struct {
 	Conn *gorm.DB
 }
 
-type Post struct {
-	Id      int
-	Content string
-	UserId  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
 
 
 func NewPostRepository(conn *gorm.DB) *PostRepository {
@@ -27,21 +20,18 @@ func NewPostRepository(conn *gorm.DB) *PostRepository {
 }
 
 func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
-	var posts []*Post
-	if err := r.Conn.Find(&posts).Error; err != nil {
+	var posts []*dao.Post
+	if err := r.Conn.Preload("Replies").Preload("User").Find(&posts).Error; err != nil {
 		return nil, err
 	}
-
+   
 	var result []*entities.Post
 	for _, post := range posts {
-		result = append(result, &entities.Post{
-			Id:        post.Id,
-			Content:   post.Content,
-			UserId:    post.UserId,
-			CreatedAt: post.CreatedAt,
-			UpdatedAt: post.UpdatedAt,
-		})
-	}
-
+		result = append(result, post.ToEntity())
+	} 
+    
 	return result, nil
 }
+
+
+
