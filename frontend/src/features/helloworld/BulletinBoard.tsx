@@ -25,7 +25,7 @@ export function BulletinBoard() {
   const { posts } = useAppSelector((state) => state.posts);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(APIService.getHello());
+    dispatch(APIService.getBoard());
   }, [dispatch]);
   const noparents = posts.filter((post) => post.parentId === -1);
   const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
