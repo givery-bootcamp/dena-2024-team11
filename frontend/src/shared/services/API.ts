@@ -59,6 +59,30 @@ export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () =>
   }
 );
 
+export const getReplies = createAsyncThunk<BoardElement[], number>('getBoard', async (parentId) => {
+    const params = {
+      post_id: parentId.toString()
+    };
+    const queryParams = new URLSearchParams(params);
+    const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies` + queryParams);
+    if(!getResponse.ok) {
+      console.log("get error");
+      return [];
+    }
+    const getResponseObj: DbReply[] = await getResponse.json();
+    const boardElementData = getResponseObj.map(dbReply => {
+      const newReply = {
+        id: dbReply.id,
+        name: dbReply.user.name,
+        message: dbReply.content,
+        parentId: parentId,
+      };
+      return newReply;
+    })
+    return boardElementData;
+  }
+);
+
 export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',async (message) => {
     const postResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
       method: 'POST',
