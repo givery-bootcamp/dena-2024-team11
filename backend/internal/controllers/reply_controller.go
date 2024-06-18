@@ -13,6 +13,7 @@ func GetRepliesByPostId(ctx *gin.Context) {
 	req := request.GetRepliesRequest{}
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		handleError(ctx, 400, errors.New("get replies query param is invalid"))
+		return
 	}
 	repository := repositories.NewReplyRepository(DB(ctx))
 	replies, err := repository.GetRepliesByPostId(req.PostId)
@@ -33,11 +34,13 @@ func PostReply(ctx *gin.Context) {
 	req := request.PostReplyRequest{}
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		handleError(ctx, 400, errors.New("post reply request body is invalid"))
+		return
 	}
 	repository := repositories.NewReplyRepository(DB(ctx))
 	reply, err := repository.CreateReply(req.PostId, req.UserId, req.Content)
-	if err != nil {
+	if err != nil || reply == nil{
 		handleError(ctx, 500, errors.New("create reply record failed"))
+		return
 	}
 	ctx.JSON(201, response.NewReplyResponse(reply))
 }

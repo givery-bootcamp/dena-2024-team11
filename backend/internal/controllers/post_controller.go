@@ -30,11 +30,13 @@ func PostPosts(ctx *gin.Context) {
 	req := request.PostPostsRequest{}
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		handleError(ctx, 400, errors.New("post posts request body is unvalid"))
+		return
 	}
 	repository := repositories.NewPostRepository(DB(ctx))
 	post, err := repository.CreatePost(req.UserId, req.Content)
-	if err != nil {
+	if err != nil || post == nil {
 		handleError(ctx, 500, errors.New("create post record failed"))
+		return
 	}
 	ctx.JSON(201, response.NewPostResponse(post, len(post.Replies)))
 }
