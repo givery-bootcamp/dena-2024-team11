@@ -2,12 +2,11 @@ package entities
 
 import "time"
 
-type Post struct {
+type User struct {
 	Id      int `json:"id"`
-	Content string `json:"content"`
-	User  *User `json:"user"`
+	Name string `json:"name"`
+	Icon  string `json:"icon"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Replies []*Reply `json:"replies"`
 }
 
