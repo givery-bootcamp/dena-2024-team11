@@ -1,7 +1,7 @@
 import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BoardElement } from "../../shared/models";
 import { actions } from "../../shared/store";
 
@@ -20,7 +20,13 @@ type InputBoxProps = {
 export function BulletinBoard() {
   // const [posts, dispatch] = useReducer(postsReducer, initialPosts);
  // const [posts, setPosts] = useState(initialPosts);
+  //最新のDBを取得してstoreを更新
+
   const { posts } = useAppSelector((state) => state.posts);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(APIService.getHello());
+  }, [dispatch]);
   const noparents = posts.filter((post) => post.parentId === -1);
   const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
   const zeroparents = posts.filter((post) => post.parentId === selectedThreadId);

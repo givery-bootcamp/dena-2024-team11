@@ -34,6 +34,31 @@ export const getHello = createAsyncThunk<Hello>('getHello', async () => {
   return await response.json();
 });
 
+export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () => {
+    const getResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
+      method: 'GET',
+    });
+
+    if(!getResponse.ok) {
+      console.log("get error");
+      return [];
+    }
+
+    const getResponseObj: DbPost[] = await getResponse.json();
+
+    const boardElementData = getResponseObj.map(dbPost => {
+      const newElement = {
+        id: dbPost.id,
+        name: dbPost.user.name,
+        message: dbPost.content,
+        parentId: -1,
+      }
+      return newElement;
+    });
+    return boardElementData;
+  }
+);
+
 export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',async (message) => {
     const postResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
       method: 'POST',
