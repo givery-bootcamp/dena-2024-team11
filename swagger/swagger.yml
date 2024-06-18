@@ -1,94 +1,129 @@
 openapi: 3.0.0
 info:
-  title: Sample API
-  description: 
+  title: Webアプリケーション研修11班 API
+  description: Webアプリケーション研修11班
   version: 0.0.0
 servers:
   - url: http://localhost:9000
     description: local server
 paths:
-  /users:
-    get:
-      summary: Returns a list of users.
-      description: Optional extended description in CommonMark or HTML.
-      responses:
-        '200':    # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema: 
-                type: array
-                items: 
-                  type: string
   /posts:
     get:
       summary: 全ての投稿をリストで返す
-      description:
       responses:
-        '200':
+        "200":
           description: 投稿のJSON配列
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: object
-                  required:
-                  - id
-                  - user_id
-                  - content
-                  - created_at
-                  - updated_at
-                  properties:
-                    id:
-                      type: string
-                    user_id:
-                      type: string
-                    content:
-                      type: string
-                    created_at:
-                      type: date
-                    updated_at:
-                      type: date
+                  $ref: "#/components/schemas/Post"
     post:
       summary: 投稿を作成する
-      description: 
       requestBody:
-        description: 
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                required:
+                - user_id
+                - content
+                properties:
+                  user_id:
+                    type: integer
+                  content:
+                    type: string
+      responses:
+        "201":
+          description: 投稿のJSON
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/Post"
+  /replies:
+    get:
+      summary: 投稿のIDから、その投稿への返信をリストで返す
+      parameters:
+        - name: post_id
+          in: query
+          required: true
+          description: 投稿のID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 返信のJSON配列
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: "#/components/schemas/Reply"
+    post:
+      summary: 返信を作成する
+      requestBody:
         required: true
         content:
           application/json:
               schema: 
                 type: object
                 required:
+                - post_id
                 - user_id
                 - content
                 properties:
+                  post_id: 
+                    type: integer
                   user_id:
-                    type: string
+                    type: integer
                   content:
                     type: string
       responses:
         '201':
-          description: 投稿のJSON
+          description: 返信のJSON
           content:
             application/json:
               schema: 
-                type: object
-                required:
-                - id
-                - user_id
-                - content
-                - created_at
-                - updated_at
-                properties:
-                  id:
-                    type: string
-                  user_id:
-                    type: string
-                  content:
-                    type: string
-                  created_at:
-                    type: date
-                  updated_at:
-                    type: date
+                $ref: "#/components/schemas/Reply"
+
+components:
+  schemas:
+    Post:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Reply"
+      properties:
+        num_replies:
+          type: integer
+          description: "投稿に対する返信の数"
+    Reply:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID
+        user:
+          $ref: "#/components/schemas/UserPublic"
+        content:
+          type: string
+          description: "投稿の中身"
+        created_at:
+          type: string
+          format: date
+        updated_at:
+          type: string
+          format: date
+    UserPublic:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        icon:
+          type: string
+          description: "icon の URL"
