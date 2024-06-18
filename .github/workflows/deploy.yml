@@ -70,7 +70,7 @@ jobs:
         name: frontend-bin
         path: |
           frontend
-          docker/frontend-ci.Dockerfile
+          docker/frontend.Dockerfile
 
   # backendのdeploy(ECR更新とサービスのdeploy)
   backend-ecr-push:
@@ -101,7 +101,7 @@ jobs:
         ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
         IMAGE_TAG=latest
 
-        docker build -f docker/backend-ci.Dockerfile -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME_BACKEND:$IMAGE_TAG .
+        docker build -f docker/backend.Dockerfile -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME_BACKEND:$IMAGE_TAG .
         docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME_BACKEND:$IMAGE_TAG
   # frontend-ecr-pushを使用する場合はそちらでupdateするのでこちらはコメントアウトする
     - name: Update ECS service to force new deployment
