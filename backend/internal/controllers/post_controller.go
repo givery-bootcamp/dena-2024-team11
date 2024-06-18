@@ -18,9 +18,7 @@ func GetPosts(ctx *gin.Context) {
 
 		res := response.GetPostsResponse{}
 		for _, post := range posts {
-			postResponse := response.Post{}
-			postResponse.CreateWith(*post, len(post.Replies))
-			res = append(res, &postResponse)
+			res = append(res, response.NewPostResponse(post, len(post.Replies)))
 		}
 		ctx.JSON(200, res)
 	} else {
@@ -38,7 +36,5 @@ func PostPosts(ctx *gin.Context) {
 	if err != nil {
 		handleError(ctx, 500, errors.New("create post record failed"))
 	}
-	res := response.Post{}
-	res.CreateWith(*post, len(post.Replies))
-	ctx.JSON(201, res)
+	ctx.JSON(201, response.NewPostResponse(post, len(post.Replies)))
 }

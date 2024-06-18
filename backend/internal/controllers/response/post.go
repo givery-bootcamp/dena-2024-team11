@@ -14,14 +14,15 @@ type Post struct {
 	NumReply  int       `json:"num_reply"`
 }
 
-func (p *Post) CreateWith(post entities.Post, numReply int) {
-	p.Id = post.Id
-	p.Content = post.Content
-	p.CreatedAt = post.CreatedAt
-	p.UpdatedAt = post.UpdatedAt
-	p.NumReply = numReply
-	p.User = &User{}
-	p.User.CreateWith(*post.User)
+func NewPostResponse(post *entities.Post, numReply int) *Post {
+	return &Post{
+		Id: post.Id,
+		Content: post.Content,
+		User: NewUserReseponse(post.User),
+		CreatedAt: post.CreatedAt,
+		UpdatedAt: post.UpdatedAt,
+		NumReply: numReply,
+	}
 }
 
 type GetPostsResponse []*Post
