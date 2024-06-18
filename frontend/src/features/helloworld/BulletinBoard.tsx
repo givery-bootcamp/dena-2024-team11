@@ -1,10 +1,8 @@
-import { useReducer } from "react";
 import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BoardElement } from "../../shared/models";
-import { MessageThread } from "./MessageThread";
 import { actions } from "../../shared/store";
 
 type PostProps = {
@@ -22,11 +20,21 @@ type InputBoxProps = {
 export function BulletinBoard() {
   // const [posts, dispatch] = useReducer(postsReducer, initialPosts);
  // const [posts, setPosts] = useState(initialPosts);
-  const { posts } = useAppSelector((state) => state.posts);
+  //最新のDBを取得してstoreを更新
+
+  const { posts, replies } = useAppSelector((state) => state.posts);
   const noparents = posts.filter((post) => post.parentId === -1);
   const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
-  const zeroparents = posts.filter((post) => post.parentId === selectedThreadId);
+  const childs = replies.filter((post) => post.parentId === selectedThreadId);
   const parentPost = posts.filter((post) => post.id === selectedThreadId);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(APIService.getBoard());
+    if (selectedThreadId === null) {
+      return;
+    }
+    dispatch(APIService.getReplies(selectedThreadId));
+  }, [dispatch]);
   return (
     <div className="bulletin-with-thread">
       <div className="bulletin-board">
@@ -35,7 +43,7 @@ export function BulletinBoard() {
       </div>
       <div>
         <PostList posts={parentPost}/>
-        <PostList posts={zeroparents} />
+        <PostList posts={childs} />
         <InputBox parentId={selectedThreadId}/>        
       </div>
     </div>
@@ -60,7 +68,7 @@ export function PostList({ posts }: PostProps) {
 }
 
 export function InputBox({parentId}: InputBoxProps) {
-  const [filterText, setFilterText] = useState(''); 
+  const [filterText, setFilterText] = useState('');
   const dispatch = useAppDispatch();
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -113,10 +121,9 @@ export function PostItem({ post }: PostItemProps) {
           {post.id} -&gt; {post.parentId}: 
           {post.name}
           <MessageItem str={post.message}/>
-          {post.parentId === -1 && <button onClick={e => {
-            dispatch(actions.SelectThread(post.id))
-
-          
+          {post.parentId === -1 && <button onClick={() => {
+            dispatch(actions.SelectThread(post.id));
+            dispatch(APIService.getReplies(post.id));
           }}>Reply</button>}
 
         </div>
