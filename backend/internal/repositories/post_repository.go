@@ -33,5 +33,13 @@ func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
 	return result, nil
 }
 
-
-
+func (r *PostRepository) CreatePost(userId int, content string) (*entities.Post, error) {
+	post := dao.Post{
+		Content: content,
+		UserId: userId,
+	}
+	if err := r.Conn.Create(&post).Error; err != nil {
+		return nil, err
+	}
+	return post.ToEntity(), nil
+}
