@@ -38,9 +38,6 @@ func PostPosts(ctx *gin.Context) {
 	if err != nil {
 		handleError(ctx, 500, errors.New("create post record failed"))
 	}
-	// response を返す
-	// response の方を定義するところから
-
 	res := response.Post{}
 	res.CreateWith(*post, len(post.Replies))
 	ctx.JSON(201, res)
