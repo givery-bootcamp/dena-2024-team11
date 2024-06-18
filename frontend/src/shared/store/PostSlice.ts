@@ -5,10 +5,12 @@ import { APIService } from '../services';
 
 export type BoardState = {
     posts: BoardElement[];
+    replies: BoardElement[];
 };
 
 export const initialState: BoardState = {
     posts: [],
+    replies: [],
 };
 
 export const postSlice = createSlice({
@@ -21,7 +23,13 @@ export const postSlice = createSlice({
             state.posts = [...action.payload];
         });
         builder.addCase(APIService.postReply.fulfilled, (state, action) => {
+            state.replies = [...action.payload];
+        });
+        builder.addCase(APIService.getBoard.fulfilled, (state, action) => {
             state.posts = [...action.payload];
+        });
+        builder.addCase(APIService.getReplies.fulfilled, (state, action) => {
+            state.replies = [...action.payload];
         });
     },
     

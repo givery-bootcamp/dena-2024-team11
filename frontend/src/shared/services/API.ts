@@ -59,12 +59,12 @@ export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () =>
   }
 );
 
-export const getReplies = createAsyncThunk<BoardElement[], number>('getBoard', async (parentId) => {
+export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies', async (parentId) => {
     const params = {
       post_id: parentId.toString()
     };
     const queryParams = new URLSearchParams(params);
-    const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies` + queryParams);
+    const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams);
     if(!getResponse.ok) {
       console.log("get error");
       return [];
@@ -90,7 +90,7 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
-        user_id: 0,
+        user_id: 1,
         content: message,
        }),
     });
@@ -132,7 +132,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
     },
     body: JSON.stringify({ 
       post_id: parentId,
-      user_id: 0,
+      user_id: 1,
       content: message,
      }),
   });
@@ -145,7 +145,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
     post_id: parentId.toString()
   };
   const queryParams = new URLSearchParams(params);
-  const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies` + queryParams);
+  const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams);
   if(!getResponse.ok) {
     console.log("get error");
     return [];
