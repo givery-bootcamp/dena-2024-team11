@@ -12,7 +12,6 @@ type PostRepository struct {
 }
 
 
-
 func NewPostRepository(conn *gorm.DB) *PostRepository {
 	return &PostRepository{
 		Conn: conn,
