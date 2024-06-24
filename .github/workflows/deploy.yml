@@ -68,8 +68,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: frontend-bin
-        path: |
-          frontend
+        path: frontend
           
   # docker/frontend-ci.Dockerfile
 
@@ -129,11 +128,7 @@ jobs:
 
     - name: Sync files to S3
       run: |
-        pwd
-        echo '----------'
-        ls ./
-        ls ./frontend
-        aws s3 sync frontend/build s3://dena-training-2024/$BUCKET_PREFIX --delete
+        aws s3 sync dist s3://dena-training-2024/$BUCKET_PREFIX --delete
 
   # frontendのdeploy(ecrへのpushとサービスのdeploy)
   # frontend-s3-pushを使用する場合はこちらはコメントアウトする
