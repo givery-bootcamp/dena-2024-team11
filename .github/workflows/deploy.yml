@@ -128,7 +128,10 @@ jobs:
         aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
 
     - name: Sync files to S3
-      run: aws s3 sync frontend/dist s3://dena-training-2024/$BUCKET_PREFIX --delete
+      run: |
+        ls ./
+        ls ./frontend
+        aws s3 sync frontend/build s3://dena-training-2024/$BUCKET_PREFIX --delete
 
   # frontendのdeploy(ecrへのpushとサービスのdeploy)
   # frontend-s3-pushを使用する場合はこちらはコメントアウトする
