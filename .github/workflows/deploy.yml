@@ -129,6 +129,8 @@ jobs:
 
     - name: Sync files to S3
       run: |
+        pwd
+        echo '----------'
         ls ./
         ls ./frontend
         aws s3 sync frontend/build s3://dena-training-2024/$BUCKET_PREFIX --delete
