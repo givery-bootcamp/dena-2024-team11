@@ -11,6 +11,8 @@ var CorsAllowOrigin = "http://localhost:3000"
 var DBHostName = "db"
 var DBPort = 3306
 var DBName = "training"
+var DBUser = "root"
+var DBPassword = ""
 
 func init() {
 	if v := os.Getenv("HOSTNAME"); v != "" {
