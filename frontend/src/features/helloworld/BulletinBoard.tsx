@@ -7,10 +7,12 @@ import { actions } from "../../shared/store";
 
 type PostProps = {
   posts: BoardElement[];
+  isThread?: boolean;
 };
 
 type PostItemProps = {
   post: BoardElement;
+  isThread?: boolean;
 };
 
 type InputBoxProps = {
@@ -38,11 +40,11 @@ export function BulletinBoard() {
   return (
     <div className="bulletin-with-thread">
       <div className="bulletin-board">
-        <PostList posts={noparents} />
+        <PostList posts={noparents}/>
         <InputBox parentId={-1}/>
       </div>
       <div>
-        <PostList posts={parentPost}/>
+        <PostList posts={parentPost} isThread={true}/>
         <PostList posts={childs} />
         <InputBox parentId={selectedThreadId}/>        
       </div>
@@ -58,13 +60,13 @@ export function BulletinBoard() {
   // return <div>{hello?.message}</div>;
 }
 
-export function PostList({ posts }: PostProps) {
+export function PostList({ posts, isThread = false }: PostProps) {
   const postListItems = posts.map((post, id) => (
     <li key={id.toString()}>
-      <PostItem post={post} />
+      <PostItem post={post} isThread={isThread} />
     </li>
   ));
-  return <ul>{postListItems}</ul>;
+  return <ul className="post-list">{postListItems}</ul>;
 }
 
 export function InputBox({parentId}: InputBoxProps) {
@@ -111,20 +113,35 @@ export function InputBox({parentId}: InputBoxProps) {
   );
 }
 
-export function PostItem({ post }: PostItemProps) {
+export function PostItem({ post, isThread }: PostItemProps) {
   const dispatch = useAppDispatch();
   // function resetParentId() {
   //   return post.parentId;
   // }
   return (
-        <div>
-          {post.id} -&gt; {post.parentId}: 
-          {post.name}
-          <MessageItem str={post.message}/>
-          {post.parentId === -1 && <button onClick={() => {
-            dispatch(actions.SelectThread(post.id));
-            dispatch(APIService.getReplies(post.id));
-          }}>Reply</button>}
+        <div className="message-block">
+          <img className="message-author-image" src="/images/tanigawa.png"></img>
+          <div className="message-not-image-block">
+            <div className="message-author-name">
+              {post.id} -&gt; {post.parentId}: 
+              {post.name}
+            </div>
+            <div className="message-message">
+              <MessageItem str={post.message}/>
+            </div>
+            <div className="message-stamp-block">
+              <img className="message-stamp-image" src="/images/thumbsup.png"></img>
+              <img className="message-stamp-add" src="/images/stamp.png"></img>
+            </div>
+            {isThread || post.parentId === -1 && <div className="message-reply-block">
+              <img className="message-reply-image1" src="/images/chono.png"></img>
+              <img className="message-reply-image2" src="/images/tanigawa.png"></img>
+              <button className="message-reply-button" onClick={() => {
+                dispatch(actions.SelectThread(post.id));
+                dispatch(APIService.getReplies(post.id));
+              }}>返信する</button>
+            </div>}
+          </div>
 
         </div>
   );
