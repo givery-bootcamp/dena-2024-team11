@@ -33,4 +33,10 @@ func init() {
 	if v := os.Getenv("DB_NAME"); v != "" {
 		DBName = v
 	}
+	if v := os.Getenv("DB_User"); v != "" {
+		DBUser = v
+	}
+	if v := os.Getenv("DB_Password"); v != "" {
+		DBPassword = v
+	}
 }
