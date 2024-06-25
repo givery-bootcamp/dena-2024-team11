@@ -90,6 +90,121 @@ paths:
               schema: 
                 $ref: "#/components/schemas/Reply"
 
+  /stamp/add/post:
+    post:
+      summary: 投稿にスタンプを押す
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema: 
+                type: object
+                required:
+                - post_id
+                - user_id
+                - stamp_name
+                properties:
+                  post_id: 
+                    type: integer
+                  user_id:
+                    type: integer
+                  stamp_name:
+                    type: string
+
+      responses:
+        '200':
+          description: 更新後の投稿のJSON
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/Post"
+
+  /stamp/remove/post:
+    post:
+      summary: 投稿からスタンプを削除する
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema: 
+                type: object
+                required:
+                - post_id
+                - user_id
+                - stamp_name
+                properties:
+                  post_id: 
+                    type: integer
+                  user_id:
+                    type: integer
+                  stamp_name:
+                    type: string
+
+      responses:
+        '200':
+          description: 更新後の投稿のJSON
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/Post"
+
+  /stamp/add/reply:
+    post:
+      summary: 返信にスタンプを押す
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema: 
+                type: object
+                required:
+                - reply_id
+                - user_id
+                - stamp_name
+                properties:
+                  reply_id: 
+                    type: integer
+                  user_id:
+                    type: integer
+                  stamp_name:
+                    type: string
+      responses:
+        '200':
+          description: 更新後の返信のJSON
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/Reply"
+
+  /stamp/remove/reply:
+    post:
+      summary: 返信からスタンプを削除する
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema: 
+                type: object
+                required:
+                - reply_id
+                - user_id
+                - stamp_name
+                properties:
+                  reply_id: 
+                    type: integer
+                  user_id:
+                    type: integer
+                  stamp_name:
+                    type: string
+      responses:
+        '200':
+          description: 更新後の返信のJSON
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/Reply"
+
+
 components:
   schemas:
     Post:
@@ -117,6 +232,21 @@ components:
         updated_at:
           type: string
           format: date
+        stamps:
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/Stamp"
+    
+    Stamp:
+      type: object
+      properties:
+        name:
+          type: string
+        user_id:
+          type: integer
+
+            
     UserPublic:
       type: object
       properties:
