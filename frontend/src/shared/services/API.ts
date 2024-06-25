@@ -27,7 +27,7 @@ type DbReply = {
 }
 
 const API_ENDPOINT_PATH =
-  import.meta.env.VITE_API_ENDPOINT_PATH ?? '';
+  import.meta.env.API_ENDPOINT_PATH ?? '';
 
 export const getHello = createAsyncThunk<Hello>('getHello', async () => {
   const response = await fetch(`${API_ENDPOINT_PATH}/hello`);
@@ -161,4 +161,22 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
     return newReply;
   })
   return boardElementData;
+});
+
+export const loginBoard = createAsyncThunk<boolean, {userId: number; password: string}>('loginBoard', async ({userId, password})=> {
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      user_id: userId,
+      password: password,
+     }),
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+    return false;
+  }
+  return true;
 });
