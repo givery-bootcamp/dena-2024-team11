@@ -4,6 +4,7 @@ import (
 	"errors"
 	"myapp/internal/controllers/request"
 	"myapp/internal/repositories"
+	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -12,11 +13,16 @@ import (
 func Login(ctx *gin.Context) {
 	req := request.LoginRequest{}
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		handleError(ctx, 400, errors.New("login request body is invalid"))
+		handleError(ctx, 400, err)
 		return
 	}
+	userId, err := strconv.Atoi(req.UserId)
+	if err != nil {
+		handleError(ctx, 400, err)
+	 	return
+	}
 	repository := repositories.NewLoginRepository(DB(ctx))
-	result, err := repository.Login(req.UserId)
+	result, err := repository.Login(userId)
 	if err != nil {
 		handleError(ctx, 404, errors.New("user not found")) 
 	}
