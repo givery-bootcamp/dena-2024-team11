@@ -31,7 +31,6 @@ type DbReply = {
 
 const API_ENDPOINT_PATH =
   import.meta.env.VITE_API_ENDPOINT_PATH ?? '';
-console.log(API_ENDPOINT_PATH);
 export const getHello = createAsyncThunk<Hello>('getHello', async () => {
   const response = await fetch(`${API_ENDPOINT_PATH}/hello`);
   return await response.json();
