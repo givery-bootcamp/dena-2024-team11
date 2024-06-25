@@ -3,9 +3,11 @@ package controllers
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"log"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
+
+	"github.com/gin-gonic/gin"
 )
 
 func HelloWorld(ctx *gin.Context) {
@@ -14,6 +16,13 @@ func HelloWorld(ctx *gin.Context) {
 		handleError(ctx, 400, err)
 		return
 	}
+
+	userId, exists := ctx.Get("UserId")
+	if !exists {
+		handleError(ctx, 500, errors.New("UserId not found"))
+		return
+	}
+	log.Print("あああああ", userId)
 	repository := repositories.NewHelloWorldRepository(DB(ctx))
 	usecase := usecases.NewHelloWorldUsecase(repository)
 	result, err := usecase.Execute(lang)

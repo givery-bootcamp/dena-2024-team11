@@ -8,3 +8,5 @@ INSERT INTO replies (user_id, content,post_id) VALUES (1, '返信1\n改行',1);
 INSERT INTO replies (user_id, content,post_id) VALUES (1, '返信2\n改行',2);
 INSERT INTO replies (user_id, content,post_id) VALUES (2, '返信3\n改行',1);
 
+
+
