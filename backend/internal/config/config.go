@@ -13,6 +13,9 @@ var DBPort = 3306
 var DBName = "training"
 var DBUser = "root"
 var DBPassword = ""
+var RedisHost = "redis"
+var RedisPort = 6379
+var RedisPassword = ""
 
 func init() {
 	if v := os.Getenv("HOSTNAME"); v != "" {
@@ -38,5 +41,14 @@ func init() {
 	}
 	if v := os.Getenv("DB_PASSWORD"); v != "" {
 		DBPassword = v
+	}
+	if v := os.Getenv("REDIS_HOST"); v != "" {
+		RedisHost = v
+	}
+	if v, err := strconv.ParseInt(os.Getenv("REDIS_PORT"), 10, 64); err == nil {
+		DBPort = int(v)
+	}
+	if v := os.Getenv("REDIS_PASSWORD"); v != "" {
+		RedisPassword = v
 	}
 }
