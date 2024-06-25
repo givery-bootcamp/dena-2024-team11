@@ -4,8 +4,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - 'backend'
-      - 'frontend'
+      - 'dev'
   workflow_dispatch:
 
 env:
