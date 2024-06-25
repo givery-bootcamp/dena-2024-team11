@@ -5,8 +5,8 @@ import "./App.scss";
 function App() {
   return (
     <div className="app-root">
-      <header className="app-header">でもそんなの関係ねえ</header>
-      <main className="app-body container">
+      <header className="app-header">Srack</header>
+      <main className="app-body">
         <AppRoute />
       </main>
     </div>
