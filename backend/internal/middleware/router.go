@@ -33,6 +33,7 @@ func sessionCheck() gin.HandlerFunc {
         // セッションがない場合、ログインフォームをだす
         if userId == nil || userId == "" {
 			ctx.JSON(http.StatusUnauthorized, gin.H{})
+			ctx.Abort()
 			return
 		} else {
 			ctx.Set("UserId", userId) // ユーザidをセット
