@@ -26,9 +26,12 @@ type DbReply = {
   updated_at: string;
 }
 
-const API_ENDPOINT_PATH =
-  import.meta.env.API_ENDPOINT_PATH ?? '';
+// console.log(import.meta.env.VITE_NODE_ENV);
+// const API_ENDPOINT_PATH = import.meta.env.VITE_NODE_ENV === 'development' ? import.meta.env.VITE_API_ENDPOINT_DEV_PATH : import.meta.env.VITE_API_ENDPOINT_PROD_PATH;
 
+const API_ENDPOINT_PATH =
+  import.meta.env.VITE_API_ENDPOINT_PATH ?? '';
+console.log(API_ENDPOINT_PATH);
 export const getHello = createAsyncThunk<Hello>('getHello', async () => {
   const response = await fetch(`${API_ENDPOINT_PATH}/hello`);
   return await response.json();
