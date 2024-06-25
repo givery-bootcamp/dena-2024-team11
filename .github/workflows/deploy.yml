@@ -128,6 +128,13 @@ jobs:
     - name: Sync files to S3
       run: |
         aws s3 sync dist s3://dena-training-2024/$BUCKET_PREFIX --delete
+    
+    - name: Delete CloudFront cache
+      run: |
+        DISTRIBUTION_ID="E1NTULSMDPEREZ"
+        PATHS_TO_INVALIDATE="/*"
+        aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths $PATHS_TO_INVALIDATE
+    
 
   # frontendのdeploy(ecrへのpushとサービスのdeploy)
   # frontend-s3-pushを使用する場合はこちらはコメントアウトする
