@@ -179,3 +179,59 @@
     order: 2;
     flex-grow: 0;
 }
+
+.reaction-button {
+    /* slack-stamp */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    // padding: 10px 5px;
+    gap: 11px;
+
+    position: relative;
+    width: 40px;
+    height: 20px;
+
+    background: #F4F4F4;
+    border: 1px solid #226EA9;
+    border-radius:10px;
+}
+
+.emoji-block {
+
+    /* 絵文_字。 1 */
+
+    width: 16px;
+    height: 16px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+
+    /* 1 */
+
+    width: 16px;
+    height: 16px;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 80px;
+    line-height: 97px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
