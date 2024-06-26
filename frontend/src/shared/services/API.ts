@@ -31,15 +31,17 @@ type DbReply = {
 
 const API_ENDPOINT_PATH =
   import.meta.env.VITE_API_ENDPOINT_PATH ?? '';
-console.log(API_ENDPOINT_PATH);
 export const getHello = createAsyncThunk<Hello>('getHello', async () => {
-  const response = await fetch(`${API_ENDPOINT_PATH}/hello`);
+  const response = await fetch(`${API_ENDPOINT_PATH}/hello`, {
+    credentials: "include",
+  });
   return await response.json();
 });
 
 export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () => {
     const getResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
       method: 'GET',
+      credentials: "include"
     });
 
     if(!getResponse.ok) {
@@ -67,7 +69,9 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
       post_id: parentId.toString()
     };
     const queryParams = new URLSearchParams(params);
-    const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams);
+    const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams, {
+      credentials: "include",
+    });
     if(!getResponse.ok) {
       console.log("get error");
       return [];
@@ -96,6 +100,7 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
         user_id: 1,
         content: message,
        }),
+      credentials: "include",
     });
 
     if(!postResponse.ok) {
@@ -148,7 +153,9 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
     post_id: parentId.toString()
   };
   const queryParams = new URLSearchParams(params);
-  const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams);
+  const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams, {
+    credentials: "include",
+  });
   if(!getResponse.ok) {
     console.log("get error");
     return [];
@@ -164,4 +171,23 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
     return newReply;
   })
   return boardElementData;
+});
+
+export const loginBoard = createAsyncThunk<boolean, {userId: number; password: string}>('loginBoard', async ({userId, password})=> {
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      user_id: userId,
+      password: password,
+     }),
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+    return false;
+  }
+  return true;
 });
