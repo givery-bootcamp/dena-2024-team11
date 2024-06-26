@@ -15,6 +15,7 @@ func main() {
 	// Setup webserver
 	app := gin.Default()
 	app.Use(middleware.Transaction())
+	app.Use(middleware.SetupRedis())
 	app.Use(middleware.Cors())
 	middleware.SetupRoutes(app)
 	app.Run(fmt.Sprintf("%s:%d", config.HostName, config.Port))

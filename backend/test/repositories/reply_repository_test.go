@@ -37,7 +37,11 @@ func TestGetRepliesByPostId(t *testing.T) {
 
 	for _, tc := range testcases {
 		var existsOrNotStr string
-		if tc.dataExist { existsOrNotStr = "exist" } else { existsOrNotStr = "don't exist" }
+		if tc.dataExist {
+			existsOrNotStr = "exist"
+		} else {
+			existsOrNotStr = "don't exist"
+		}
 		t.Run(fmt.Sprintf("post_id = %d: data %s", tc.postId, existsOrNotStr), func(t *testing.T) {
 			result, err := repo.GetRepliesByPostId(tc.postId)
 			if err != nil {
@@ -50,6 +54,50 @@ func TestGetRepliesByPostId(t *testing.T) {
 			} else {
 				if result != nil {
 					t.Errorf("replies should not exists")
+				}
+			}
+		})
+	}
+}
+
+func TestCreateReply(t *testing.T) {
+	repo, teardown := setupReply()
+	defer teardown()
+
+	// Valid testcases
+	testcases := []struct {
+		postId     int
+		userId     int
+		content    string
+		postExists bool
+		userExists bool
+	}{
+		{1, 1, "テスト返信1", true, true},
+		{-1, 1, "テスト返信2", false, true},
+		{1, -1, "テスト返信3", true, false},
+		{-1, -1, "テスト返信4", false, false},
+	}
+
+	for _, tc := range testcases {
+		var avaiableOrNotStr string
+		if tc.postExists && tc.userExists {
+			avaiableOrNotStr = "insertable"
+		} else {
+			avaiableOrNotStr = "uninsertable"
+		}
+		t.Run(fmt.Sprintf("post_id = %d, user_id = %d, content = %s: %s", tc.postId, tc.userId, tc.content, avaiableOrNotStr), func(t *testing.T) {
+			result, err := repo.CreateReply(tc.postId, tc.userId, tc.content)
+			if !tc.postExists {
+				if err == nil {
+					t.Errorf("error must occur when post doen't exist.")
+				}
+			} else if !tc.userExists {
+				if err == nil {
+					t.Errorf("error must occur when user doen't exist.")
+				}
+			} else {
+				if result == nil {
+					t.Errorf("result is nil.")
 				}
 			}
 		})
