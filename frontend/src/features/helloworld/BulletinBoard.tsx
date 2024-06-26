@@ -124,6 +124,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
 
   //本来はpostからreactionを取得
   const stamps = ["saikou", "akebono", "madamada"];
+
   const reactionButtons = stamps.map((reaction, index) => {
     return (
       <li key={index.toString()}>
@@ -234,8 +235,8 @@ export function AddStampModal({stamps, position}: {stamps: string[], position: {
   const modalRef = useRef<HTMLDivElement>(null);
   const modalWidth = 300;
   const modalHeight = 500;
-  const modalTop = Math.max(position.top - modalHeight - 10 + window.scrollY, 10);
-  const modalLeft = Math.max(position.left + window.scrollX, 200);
+  const modalTop = Math.max(position.top - modalHeight - 10 + window.scrollY, 10 + window.scrollY);
+  const modalLeft = Math.max(position.left + window.scrollX, 200 + window.scrollX);
   const reactionButtons = stamps.map((reaction, index) => {
     return (
       <li key={index.toString()}>
