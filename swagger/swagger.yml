@@ -233,18 +233,26 @@ components:
           type: string
           format: date
         stamps:
-          type: array
-          items:
-            type: object
-            $ref: "#/components/schemas/Stamp"
+          $ref: "#/components/schemas/Stamp"
     
     Stamp:
       type: object
-      properties:
-        name:
-          type: string
-        user_id:
+      additionalProperties:
+        type: array
+        items:
           type: integer
+          description: "ユーザーのID"
+      example:
+        good:
+          - 1
+          - 3
+        bad:
+          - 3
+          - 2
+        additionalStamp:
+          - 1
+          - 2
+          - 4
 
             
     UserPublic:
