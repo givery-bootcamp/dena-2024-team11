@@ -90,8 +90,6 @@
     padding: 0px;
     margin-top: 5px;
 
-    height: 24px;
-
     /* Inside auto layout */
     flex: none;
     order: 2;
@@ -246,16 +244,19 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 3.72093px 6.64452px;
+    padding: 3.72093px 8.5px;
     gap: 3px;
 
     position: relative;
-    width: 48px;
+    //width: 46px;
     height: 27px;
 
-    background: #F4F4F4;
-    border-radius: 14px;
+    background: #f2f2f2;
+    border-radius: 13px;
     border: none;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    border: 1.3px solid #ffffff;
 }
 
 .before-click-stamp:hover {
@@ -264,9 +265,9 @@
 }
 
 .scalable-button:active {
-    -webkit-transform: scale(0.96);
-	-moz-transform: scale(0.96);
-	transform: scale(0.96);
+    -webkit-transform: scale(0.95);
+	-moz-transform: scale(0.95);
+	transform: scale(0.95);
 }
 
 .after-click-stamp {
@@ -277,16 +278,17 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 3.72093px 6.64452px;
+    padding: 3.72093px 8.5px;
     gap: 3px;
 
     position: relative;
-    width: 48px;
     height: 27px;
 
     background: #DCF4FC;
     border: 1.3px solid #226EA9;
-    border-radius: 14px;
+    border-radius: 13px;
+    margin-right: 2px;
+    margin-bottom: 2px;
 }
 
 .emoji-block {
@@ -337,4 +339,12 @@
     flex: none;
     order: 1;
     flex-grow: 0;
+}
+
+.message-stamp-list {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-wrap: wrap;
 }

@@ -120,7 +120,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  const buttons = ["emoji", "saikou"]; 
+  const buttons = ["emoji", "saikou", "akebono", "madamada", "hayoshiro"];
   const reactionButtons = buttons.map((reaction, index) => {
     return (
       <li id={index.toString()}>
