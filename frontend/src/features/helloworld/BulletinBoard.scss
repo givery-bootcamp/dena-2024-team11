@@ -180,6 +180,11 @@
     flex-grow: 0;
 }
 
+.message-reply-button:hover {
+    text-decoration: underline;
+    color: #2f5da2;
+}
+
 // .reaction-button {
 //     /* slack-stamp */
 
@@ -236,9 +241,35 @@
 //     flex-grow: 0;
 // }
 
-.after_click_stamp {
-    /* slack-stamp */
+.before-click-stamp {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 3.72093px 6.64452px;
+    gap: 3px;
 
+    position: relative;
+    width: 48px;
+    height: 27px;
+
+    background: #F4F4F4;
+    border-radius: 14px;
+    border: none;
+}
+
+.before-click-stamp:hover {
+    border: 1.3px solid #616161;
+    background: #fbfbfb;
+}
+
+.scalable-button:active {
+    -webkit-transform: scale(0.96);
+	-moz-transform: scale(0.96);
+	transform: scale(0.96);
+}
+
+.after-click-stamp {
     box-sizing: border-box;
 
     /* Auto layout */
@@ -247,29 +278,48 @@
     justify-content: center;
     align-items: center;
     padding: 3.72093px 6.64452px;
-    gap: 1.73px;
+    gap: 3px;
 
     position: relative;
-    width: 40px;
-    height: 22.33px;
+    width: 48px;
+    height: 27px;
 
     background: #DCF4FC;
-    border: 0.531561px solid #226EA9;
-    border-radius: 11.9601px;
+    border: 1.3px solid #226EA9;
+    border-radius: 14px;
 }
 
 .emoji-block {
     /* 絵文_字。 1 */
 
-    width: 14.22px;
-    height: 14.22px;
+    width: 17px;
+    height: 17px;
 
     /* Inside auto layout */
     flex: none;
     order: 0;
     flex-grow: 0;
 }
-.count-block{
+
+.before-click-count-block {
+    width: 9.44px;
+    height: 13.95px;
+
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+    color: #252525;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.after-click-count-block{
     /* 2 */
 
     width: 9.44px;
@@ -277,15 +327,11 @@
 
     font-family: 'Noto Sans JP';
     font-style: normal;
-    font-weight: 400;
-    font-size: 10.6312px;
+    font-weight: 500;
+    font-size: 12px;
     line-height: 15px;
-    display: flex;
-    align-items: center;
     text-align: center;
-
-    color: #000000;
-
+    color: #0c5893;
 
     /* Inside auto layout */
     flex: none;

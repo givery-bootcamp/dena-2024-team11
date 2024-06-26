@@ -118,6 +118,17 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // function resetParentId() {
   //   return post.parentId;
   // }
+
+  //本来はpostからreactionを取得
+  const buttons = ["emoji", "saikou"]; 
+  const reactionButtons = buttons.map((reaction, index) => {
+    return (
+      <li id={index.toString()}>
+        <ReactionButton str={reaction}/>
+      </li>
+    )
+  })
+
   return (
         <div className="message-block">
           <img className="message-author-image" src="/images/tanigawa.png"></img>
@@ -130,9 +141,10 @@ export function PostItem({ post, isThread }: PostItemProps) {
               <MessageItem str={post.message}/>
             </div>
             <div className="message-stamp-block">
+              <ul className="message-stamp-list">{reactionButtons}</ul>
               {/* <img className="message-stamp-image" src="/images/thumbsup.png"></img>
               <img className="message-stamp-add" src="/images/stamp.png"></img> */}
-              <ReactionButton str="emoji"/>
+              {/* <ReactionButton str="emoji"/> */}
             </div>
             {isThread || post.parentId === -1 && <div className="message-reply-block">
               <img className="message-reply-image1" src="/images/chono.png"></img>
@@ -154,11 +166,21 @@ export function MessageItem ({str} : {str:string}) {
 }
 
 export function ReactionButton ({str} : {str:string}) {
+  const [isClicked, setIsClicked] = useState(false);
+  const [stampCount, setStampCount] = useState(1);
+  function onClick() {
+    //本来はここでAPIを叩き、結果に応じて処理を分ける
+    if(!isClicked) setStampCount(stampCount+1);
+    else setStampCount(stampCount-1);
+    setIsClicked(!isClicked);
+  }
   return (
-  <button className="after_click_stamp">
-    < img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/>
-    <div className="count-block">2</div>
-  </button> 
+    <button className={"scalable-button " + (isClicked ? "after-click-stamp" : "before-click-stamp")} onClick={onClick}>
+      <img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/>
+      <div className={isClicked ? "after-click-count-block" : "before-click-count-block"}>
+        <span>{stampCount}</span>
+      </div>
+    </button> 
   );
 }
 
