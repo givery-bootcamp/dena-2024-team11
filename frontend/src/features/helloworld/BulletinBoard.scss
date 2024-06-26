@@ -180,49 +180,106 @@
     flex-grow: 0;
 }
 
-.reaction-button {
+// .reaction-button {
+//     /* slack-stamp */
+
+//     /* Auto layout */
+//     display: flex;
+//     flex-direction: row;
+//     justify-content: center;
+//     align-items: center;
+//     // padding: 10px 5px;
+//     gap: 11px;
+
+//     position: relative;
+//     width: 40px;
+//     height: 20px;
+
+//     background: #F4F4F4;
+//     border: 1px solid #226EA9;
+//     border-radius:10px;
+// }
+
+// .emoji-block {
+
+//     /* 絵文_字。 1 */
+
+//     width: 16px;
+//     height: 16px;
+
+//     /* Inside auto layout */
+//     flex: none;
+//     order: 0;
+//     flex-grow: 0;
+
+
+//     /* 1 */
+
+//     width: 16px;
+//     height: 16px;
+
+//     font-family: 'Inter';
+//     font-style: normal;
+//     font-weight: 400;
+//     font-size: 80px;
+//     line-height: 97px;
+//     display: flex;
+//     align-items: center;
+//     text-align: center;
+
+//     color: #000000;
+
+
+//     /* Inside auto layout */
+//     flex: none;
+//     order: 1;
+//     flex-grow: 0;
+// }
+
+.after_click_stamp {
     /* slack-stamp */
+
+    box-sizing: border-box;
 
     /* Auto layout */
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    // padding: 10px 5px;
-    gap: 11px;
+    padding: 3.72093px 6.64452px;
+    gap: 1.73px;
 
     position: relative;
     width: 40px;
-    height: 20px;
+    height: 22.33px;
 
-    background: #F4F4F4;
-    border: 1px solid #226EA9;
-    border-radius:10px;
+    background: #DCF4FC;
+    border: 0.531561px solid #226EA9;
+    border-radius: 11.9601px;
 }
 
 .emoji-block {
-
     /* 絵文_字。 1 */
 
-    width: 16px;
-    height: 16px;
+    width: 14.22px;
+    height: 14.22px;
 
     /* Inside auto layout */
     flex: none;
     order: 0;
     flex-grow: 0;
+}
+.count-block{
+    /* 2 */
 
+    width: 9.44px;
+    height: 13.95px;
 
-    /* 1 */
-
-    width: 16px;
-    height: 16px;
-
-    font-family: 'Inter';
+    font-family: 'Noto Sans JP';
     font-style: normal;
     font-weight: 400;
-    font-size: 80px;
-    line-height: 97px;
+    font-size: 10.6312px;
+    line-height: 15px;
     display: flex;
     align-items: center;
     text-align: center;

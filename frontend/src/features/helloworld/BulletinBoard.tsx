@@ -132,7 +132,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
             <div className="message-stamp-block">
               {/* <img className="message-stamp-image" src="/images/thumbsup.png"></img>
               <img className="message-stamp-add" src="/images/stamp.png"></img> */}
-              <ReactionButton str="chono"/>
+              <ReactionButton str="emoji"/>
             </div>
             {isThread || post.parentId === -1 && <div className="message-reply-block">
               <img className="message-reply-image1" src="/images/chono.png"></img>
@@ -154,6 +154,11 @@ export function MessageItem ({str} : {str:string}) {
 }
 
 export function ReactionButton ({str} : {str:string}) {
-  return <button className="reaction-button">< img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/></button> 
+  return (
+  <button className="after_click_stamp">
+    < img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/>
+    <div className="count-block">2</div>
+  </button> 
+  );
 }
 
