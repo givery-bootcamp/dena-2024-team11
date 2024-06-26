@@ -1,7 +1,7 @@
 import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, CSSProperties } from 'react';
 import { BoardElement } from "../../shared/models";
 import { actions } from "../../shared/store";
 
@@ -29,6 +29,8 @@ export function BulletinBoard() {
   const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
   const childs = replies.filter((post) => post.parentId === selectedThreadId);
   const parentPost = posts.filter((post) => post.id === selectedThreadId);
+  const showModal = useAppSelector((state) => state.modal.showModal);
+  const modalPosition = useAppSelector((state) => state.modal.position);
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(APIService.getBoard());
@@ -38,15 +40,18 @@ export function BulletinBoard() {
     dispatch(APIService.getReplies(selectedThreadId));
   }, [dispatch]);
   return (
-    <div className="bulletin-with-thread">
-      <div className="bulletin-board">
-        <PostList posts={noparents}/>
-        <InputBox parentId={-1}/>
-      </div>
-      <div>
-        <PostList posts={parentPost} isThread={true}/>
-        <PostList posts={childs} />
-        <InputBox parentId={selectedThreadId}/>        
+    <div>
+      {showModal && <AddStampModal stamps={["saikou", "akebono", "madamada"]} position={modalPosition}/>}
+      <div className="bulletin-with-thread">
+        <div className="bulletin-board">
+          <PostList posts={noparents}/>
+          <InputBox parentId={-1}/>
+        </div>
+        <div>
+          <PostList posts={parentPost} isThread={true}/>
+          <PostList posts={childs} />
+          <InputBox parentId={selectedThreadId}/>        
+        </div>
       </div>
     </div>
   );
@@ -118,8 +123,8 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  const buttons = ["saikou", "akebono", "madamada"];
-  const reactionButtons = buttons.map((reaction, index) => {
+  const stamps = ["saikou", "akebono", "madamada"];
+  const reactionButtons = stamps.map((reaction, index) => {
     return (
       <li key={index.toString()}>
         <ReactionButton str={reaction}/>
@@ -189,6 +194,9 @@ export function ReactionButton ({str} : {str:string}) {
 
 export function AddReactionButton() {
   const [isHover, setIsHover] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
+  const dispatch = useAppDispatch();
+
   function onMouseEnter() {
     setIsHover(true);
   }
@@ -196,10 +204,79 @@ export function AddReactionButton() {
     setIsHover(false);
   }
 
+  function onClick() {
+    const rect = ref.current?.getBoundingClientRect();
+    if(rect?.top === undefined && rect?.left === undefined) return;
+    const top = rect?.top;
+    const left = rect?.left;
+    dispatch(actions.ShowModal({
+      showModal: true,
+      position: {
+        top: top,
+        left: left,
+      }
+    }));
+  }
+
   return (
-    <button className={"scalable-button stamp-button add-stamp"} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <button className={"scalable-button stamp-button add-stamp"}
+      ref={ref}
+      onMouseEnter={onMouseEnter} 
+      onMouseLeave={onMouseLeave}
+      onClick={onClick}>
       <img className="emoji-block" src={"/images/_face" + (isHover ? "_hover" : "") + ".png"} alt="add stamp"/>
     </button> 
   );
+}
+
+export function AddStampModal({stamps, position}: {stamps: string[], position: {top: number, left: number}}) {
+  const dispatch = useAppDispatch();
+  const modalRef = useRef<HTMLDivElement>(null);
+  const modalWidth = 300;
+  const modalHeight = 500;
+  const modalTop = Math.max(position.top - modalHeight - 10 + window.scrollY, 10);
+  const modalLeft = Math.max(position.left + window.scrollX, 200);
+  const reactionButtons = stamps.map((reaction, index) => {
+    return (
+      <li key={index.toString()}>
+        <StampItem stampName={reaction}/>
+      </li>
+    )
+  });
+  function onMouseDown(e: React.MouseEvent) {
+    if(modalRef.current?.contains(e.target as Node)) return;
+    dispatch(actions.ShowModal({
+      showModal: false,
+      position: {
+        top: 0,
+        left: 0,
+      }
+    }));
+  }
+  const modalStyle:CSSProperties = {
+    position: 'absolute',
+    top: `${modalTop}px`,
+    left: `${modalLeft}px`,
+    width: `${modalWidth}px`,
+    height: `${modalHeight}px`,
+  }
+  return (
+    <div className="overlay" onMouseDown={onMouseDown}>
+      <div className="modal-modal" style={modalStyle}  ref={modalRef}>
+        <ul className="modal-stamp-list">{reactionButtons}</ul>
+      </div>
+    </div>
+  );
+}
+
+export function StampItem({stampName}: {stampName: string}) {
+  function onClick() {
+    alert(`hello, ${stampName}`);
+  }
+  return (
+    <button className="stamp-item-button" onClick={onClick}>
+      <img className="stamp-item-image" src={"/images/" + stampName + ".png"} alt={stampName}/>
+    </button>
+  )
 }
 
