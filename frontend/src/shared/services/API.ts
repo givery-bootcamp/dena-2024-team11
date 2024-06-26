@@ -33,6 +33,7 @@ const API_ENDPOINT_PATH =
   import.meta.env.VITE_API_ENDPOINT_PATH ?? '';
 export const getHello = createAsyncThunk<Hello>('getHello', async () => {
   const response = await fetch(`${API_ENDPOINT_PATH}/hello`, {
+    mode: "cors",
     credentials: "include",
   });
   return await response.json();
@@ -41,7 +42,8 @@ export const getHello = createAsyncThunk<Hello>('getHello', async () => {
 export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () => {
     const getResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
       method: 'GET',
-      credentials: "include"
+      mode: "cors",
+      credentials: "include",
     });
 
     if(!getResponse.ok) {
@@ -70,6 +72,7 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
     };
     const queryParams = new URLSearchParams(params);
     const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams, {
+      mode: "cors",
       credentials: "include",
     });
     if(!getResponse.ok) {
@@ -100,6 +103,7 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
         user_id: 1,
         content: message,
        }),
+      mode: "cors",
       credentials: "include",
     });
 
@@ -110,6 +114,8 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
 
     const getResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
       method: 'GET',
+      mode: "cors",
+      credentials: "include",
     });
 
     if(!getResponse.ok) {
@@ -142,7 +148,8 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
       post_id: parentId,
       user_id: 1,
       content: message,
-     }),
+    }),
+    mode: "cors",
     credentials: "include",
   });
   if(!postResponse.ok) {
@@ -155,6 +162,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
   };
   const queryParams = new URLSearchParams(params);
   const getResponse = await fetch(`${API_ENDPOINT_PATH}/replies?` + queryParams, {
+    mode: "cors",
     credentials: "include",
   });
   if(!getResponse.ok) {
@@ -183,7 +191,8 @@ export const loginBoard = createAsyncThunk<boolean, {userId: number; password: s
     body: JSON.stringify({ 
       user_id: userId,
       password: password,
-     }),
+    }),
+    mode: "cors",
     credentials: "include",
   });
   if(!postResponse.ok) {
