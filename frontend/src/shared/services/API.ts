@@ -143,6 +143,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
       user_id: 1,
       content: message,
      }),
+    credentials: "include",
   });
   if(!postResponse.ok) {
     console.log("post error");
