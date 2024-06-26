@@ -98,8 +98,6 @@ export function InputBox({parentId}: InputBoxProps) {
     <input
       type="submit"
       value="Submit"
-      
-
     />
       
     {/* <label>
@@ -120,10 +118,10 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  const buttons = ["emoji", "saikou", "akebono", "madamada", "hayoshiro"];
+  const buttons = ["saikou", "akebono", "madamada"];
   const reactionButtons = buttons.map((reaction, index) => {
     return (
-      <li id={index.toString()}>
+      <li key={index.toString()}>
         <ReactionButton str={reaction}/>
       </li>
     )
@@ -141,7 +139,12 @@ export function PostItem({ post, isThread }: PostItemProps) {
               <MessageItem str={post.message}/>
             </div>
             <div className="message-stamp-block">
-              <ul className="message-stamp-list">{reactionButtons}</ul>
+              <ul className="message-stamp-list">
+                {reactionButtons}
+                <li key="add">
+                  <AddReactionButton/>
+                </li>
+              </ul>
               {/* <img className="message-stamp-image" src="/images/thumbsup.png"></img>
               <img className="message-stamp-add" src="/images/stamp.png"></img> */}
               {/* <ReactionButton str="emoji"/> */}
@@ -175,11 +178,27 @@ export function ReactionButton ({str} : {str:string}) {
     setIsClicked(!isClicked);
   }
   return (
-    <button className={"scalable-button " + (isClicked ? "after-click-stamp" : "before-click-stamp")} onClick={onClick}>
+    <button className={"scalable-button stamp-button " + (isClicked ? "after-click-stamp" : "before-click-stamp")} onClick={onClick}>
       <img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/>
       <div className={isClicked ? "after-click-count-block" : "before-click-count-block"}>
         <span>{stampCount}</span>
       </div>
+    </button> 
+  );
+}
+
+export function AddReactionButton() {
+  const [isHover, setIsHover] = useState(false);
+  function onMouseEnter() {
+    setIsHover(true);
+  }
+  function onMouseLeave() {
+    setIsHover(false);
+  }
+
+  return (
+    <button className={"scalable-button stamp-button add-stamp"} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <img className="emoji-block" src={"/images/_face" + (isHover ? "_hover" : "") + ".png"} alt="add stamp"/>
     </button> 
   );
 }

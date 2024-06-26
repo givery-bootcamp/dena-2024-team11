@@ -239,7 +239,8 @@
 //     flex-grow: 0;
 // }
 
-.before-click-stamp {
+
+.stamp-button {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -250,12 +251,37 @@
     position: relative;
     //width: 46px;
     height: 27px;
-
-    background: #f2f2f2;
     border-radius: 13px;
-    border: none;
     margin-right: 2px;
     margin-bottom: 2px;
+    border: none;
+}
+
+.add-stamp {
+    background: #f2f2f2;
+    border: 1.3px solid #ffffff;
+}
+
+.add-stamp:hover {
+    border: 1.3px solid #616161;
+    background: #fbfbfb;
+}
+
+.before-click-stamp {
+    // display: flex;
+    // flex-direction: row;
+    // justify-content: center;
+    // align-items: center;
+    // padding: 3.72093px 8.5px;
+    // gap: 3px;
+
+    // position: relative;
+    // height: 27px;
+    // border-radius: 13px;
+    // margin-right: 2px;
+    // margin-bottom: 2px;
+
+    background: #f2f2f2;
     border: 1.3px solid #ffffff;
 }
 
@@ -272,23 +298,22 @@
 
 .after-click-stamp {
     box-sizing: border-box;
-
     /* Auto layout */
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 3.72093px 8.5px;
-    gap: 3px;
+    // display: flex;
+    // flex-direction: row;
+    // justify-content: center;
+    // align-items: center;
+    // padding: 3.72093px 8.5px;
+    // gap: 3px;
 
-    position: relative;
-    height: 27px;
+    // position: relative;
+    // height: 27px;
+    // border-radius: 13px;
+    // margin-right: 2px;
+    // margin-bottom: 2px;
 
     background: #DCF4FC;
     border: 1.3px solid #226EA9;
-    border-radius: 13px;
-    margin-right: 2px;
-    margin-bottom: 2px;
 }
 
 .emoji-block {
