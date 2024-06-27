@@ -17,116 +17,67 @@ func NewPostRepository(conn *gorm.DB) *PostRepository {
 
 func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
 	r.Conn = r.Conn.Debug()
-	var rows []dao.PostWithRelations
+	var posts []dao.Post
 
-	if err := r.fetchPostData(&rows); err != nil {
+	if err := r.fetchPostData(&posts); err != nil {
 		return nil, err
 	}
 
-	postMap := r.createPostMap(rows)
-	return r.convertToEntityPosts(postMap), nil
+	return convertDaoPostsToEntityPosts(posts), nil
 }
 
-func (r *PostRepository) fetchPostData(rows *[]dao.PostWithRelations) error {
-	return r.Conn.Table("posts").
-		Select(`posts.*, users.name as user_name,
-                replies.id as reply_id, replies.user_id as reply_user_id, replies.content as reply_content,
-                post_stamps.name as stamp_name, post_stamps.user_id as stamp_user_id`).
-		Joins("left join users on users.id = posts.user_id").
-		Joins("left join replies on replies.post_id = posts.id").
-		Joins("left join post_stamps on post_stamps.post_id = posts.id").
-		Find(rows).Error
+func (r *PostRepository) fetchPostData(posts *[]dao.Post) error {
+	return r.Conn.Preload("User").
+		Preload("Replies").
+		Preload("Replies.User").
+		Preload("Stamps").
+		Preload("Stamps.User").
+		Find(posts).Error
 }
 
-func (r *PostRepository) createPostMap(rows []dao.PostWithRelations) map[int]*dao.Post {
-	postMap := make(map[int]*dao.Post)
-	for _, row := range rows {
-		post, exists := postMap[row.Id]
-		if !exists {
-			post = r.initializePost(&row)
-			postMap[row.Id] = post
-		}
-		r.addReplyIfExists(post, &row)
-		r.addStampIfExists(post, &row)
-	}
-	return postMap
-}
-
-func (r *PostRepository) initializePost(row *dao.PostWithRelations) *dao.Post {
-	post := &row.Post
-	post.User = dao.User{Id: row.UserId, Name: row.UserName}
-	post.Replies = []*dao.Reply{}
-	post.Stamps = []*dao.PostStamp{}
-	return post
-}
-
-func (r *PostRepository) addReplyIfExists(post *dao.Post, row *dao.PostWithRelations) {
-	if row.ReplyID != 0 {
-		reply := &dao.Reply{
-			Id:      row.ReplyID,
-			UserId:  row.ReplyUserID,
-			Content: row.ReplyContent,
-			PostId:  post.Id,
-			User:    dao.User{Id: row.ReplyUserID},
-		}
-		post.Replies = append(post.Replies, reply)
-	}
-}
-
-func (r *PostRepository) addStampIfExists(post *dao.Post, row *dao.PostWithRelations) {
-	if row.StampName != "" {
-		stamp := &dao.PostStamp{
-			Name:   row.StampName,
-			UserId: row.StampUserID,
-			PostId: post.Id,
-			User:   dao.User{Id: row.StampUserID},
-		}
-		post.Stamps = append(post.Stamps, stamp)
-	}
-}
-
-func (r *PostRepository) convertToEntityPosts(postMap map[int]*dao.Post) []*entities.Post {
-	var result []*entities.Post
-	for _, post := range postMap {
+func convertDaoPostsToEntityPosts(daoPosts []dao.Post) []*entities.Post {
+	var entityPosts []*entities.Post
+	for _, daoPost := range daoPosts {
 		entityPost := &entities.Post{
-			Id:        post.Id,
-			Content:   post.Content,
-			User:      &entities.User{Id: post.User.Id, Name: post.User.Name},
-			Replies:   mapReplies(post.Replies),
-			Stamps:    mapStamps(post.Stamps),
-			CreatedAt: post.CreatedAt,
-			UpdatedAt: post.UpdatedAt,
+			Id:        daoPost.Id,
+			Content:   daoPost.Content,
+			User:      daoPost.User.ToEntity(),
+			CreatedAt: daoPost.CreatedAt,
+			UpdatedAt: daoPost.UpdatedAt,
+			Replies:   convertDaoRepliesToEntityReplies(daoPost.Replies),
+			Stamps:    convertDaoStampsToEntityStamps(daoPost.Stamps),
 		}
-		result = append(result, entityPost)
+		entityPosts = append(entityPosts, entityPost)
 	}
-	return result
+	return entityPosts
 }
 
-func mapReplies(daoReplies []*dao.Reply) []*entities.Reply {
-	var replies []*entities.Reply
+func convertDaoRepliesToEntityReplies(daoReplies []*dao.Reply) []*entities.Reply {
+	var entityReplies []*entities.Reply
 	for _, daoReply := range daoReplies {
 		entityReply := &entities.Reply{
 			Id:        daoReply.Id,
 			Content:   daoReply.Content,
-			User:      &entities.User{Id: daoReply.User.Id, Name: daoReply.User.Name},
+			User:      daoReply.User.ToEntity(),
 			PostId:    daoReply.PostId,
 			CreatedAt: daoReply.CreatedAt,
 			UpdatedAt: daoReply.UpdatedAt,
 		}
-		replies = append(replies, entityReply)
+		entityReplies = append(entityReplies, entityReply)
 	}
-	return replies
+	return entityReplies
 }
 
-func mapStamps(daoStamps []*dao.PostStamp) []*entities.Stamp {
-	var stamps []*entities.Stamp
+func convertDaoStampsToEntityStamps(daoStamps []*dao.PostStamp) []*entities.Stamp {
+	var entityStamps []*entities.Stamp
 	for _, daoStamp := range daoStamps {
-		stamps = append(stamps, &entities.Stamp{
+		entityStamp := &entities.Stamp{
 			Name: daoStamp.Name,
-			User: &entities.User{Id: daoStamp.User.Id},
-		})
+			User: daoStamp.User.ToEntity(),
+		}
+		entityStamps = append(entityStamps, entityStamp)
 	}
-	return stamps
+	return entityStamps
 }
 
 func (r *PostRepository) CreatePost(userId int, content string) (*entities.Post, error) {
