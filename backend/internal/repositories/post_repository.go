@@ -23,7 +23,12 @@ func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
 		return nil, err
 	}
 
-	return convertDaoPostsToEntityPosts(posts), nil
+	var result []*entities.Post
+	for _, post := range posts {
+		result = append(result, post.ToEntity())
+	}
+
+	return result, nil
 }
 
 func (r *PostRepository) fetchPostData(posts *[]dao.Post) error {
@@ -33,51 +38,6 @@ func (r *PostRepository) fetchPostData(posts *[]dao.Post) error {
 		Preload("Stamps").
 		Preload("Stamps.User").
 		Find(posts).Error
-}
-
-func convertDaoPostsToEntityPosts(daoPosts []dao.Post) []*entities.Post {
-	var entityPosts []*entities.Post
-	for _, daoPost := range daoPosts {
-		entityPost := &entities.Post{
-			Id:        daoPost.Id,
-			Content:   daoPost.Content,
-			User:      daoPost.User.ToEntity(),
-			CreatedAt: daoPost.CreatedAt,
-			UpdatedAt: daoPost.UpdatedAt,
-			Replies:   convertDaoRepliesToEntityReplies(daoPost.Replies),
-			Stamps:    convertDaoStampsToEntityStamps(daoPost.Stamps),
-		}
-		entityPosts = append(entityPosts, entityPost)
-	}
-	return entityPosts
-}
-
-func convertDaoRepliesToEntityReplies(daoReplies []*dao.Reply) []*entities.Reply {
-	var entityReplies []*entities.Reply
-	for _, daoReply := range daoReplies {
-		entityReply := &entities.Reply{
-			Id:        daoReply.Id,
-			Content:   daoReply.Content,
-			User:      daoReply.User.ToEntity(),
-			PostId:    daoReply.PostId,
-			CreatedAt: daoReply.CreatedAt,
-			UpdatedAt: daoReply.UpdatedAt,
-		}
-		entityReplies = append(entityReplies, entityReply)
-	}
-	return entityReplies
-}
-
-func convertDaoStampsToEntityStamps(daoStamps []*dao.PostStamp) []*entities.Stamp {
-	var entityStamps []*entities.Stamp
-	for _, daoStamp := range daoStamps {
-		entityStamp := &entities.Stamp{
-			Name: daoStamp.Name,
-			User: daoStamp.User.ToEntity(),
-		}
-		entityStamps = append(entityStamps, entityStamp)
-	}
-	return entityStamps
 }
 
 func (r *PostRepository) CreatePost(userId int, content string) (*entities.Post, error) {
