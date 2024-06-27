@@ -21,13 +21,11 @@ func (p *Post) ToEntity() *entities.Post {
 	replies := []*entities.Reply{}
 	for _, reply := range p.Replies {
 		replies = append(replies, reply.ToEntity())
-		// fmt.Println("Replies.User.Id: ", reply.User.Id)
 	}
 
 	Stamps := []*entities.Stamp{}
 	for _, postStamp := range p.Stamps {
 		Stamps = append(Stamps, postStamp.ToEntity())
-		// fmt.Println("Stamps.User.Id: ", postStamp.User.Id)
 	}
 
 

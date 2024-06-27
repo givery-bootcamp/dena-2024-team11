@@ -76,6 +76,11 @@ func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
                 Name:   row.StampName,
                 UserId: row.StampUserID,
                 PostId: post.Id,
+                User: dao.User{
+                    Id:   row.StampUserID,
+                    Name: row.UserName,
+                },
+                Post: *post,
             }
             post.Stamps = append(post.Stamps, stamp)
         }
