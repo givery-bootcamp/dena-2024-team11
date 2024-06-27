@@ -147,7 +147,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
   const reactionButtons = stamps?.map((stamp, index) => {
     return (
       <li key={index.toString()}>
-        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count}/>
+        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} postId={post.id}/>
       </li>
     )
   })
@@ -193,12 +193,32 @@ export function MessageItem ({str} : {str:string}) {
   return <div>{str}</div>
 }
 
-export function ReactionButton ({str, isIncluded, count} : {str:string, isIncluded:boolean, count:number}) {
+export function ReactionButton ({str, isIncluded, count, postId} : {str:string, isIncluded:boolean, count:number, postId:number}) {
   // const [isClicked, setIsClicked] = useState(isIncluded);
   // const [stampCount, setStampCount] = useState(count);
+  const dispatch = useAppDispatch();
   function onClick() {
     //本来はここでAPIを叩き、結果に応じて処理を分ける
     console.log("clicked");
+    if (isIncluded) {
+      dispatch(actions.RemoveStamp({
+        postId: postId,
+        stamp: {
+          name: str,
+          isIncluded: false,
+          count: -1,
+        },
+      }));
+    } else {
+      dispatch(actions.AddStamp({
+        postId: postId,
+        stamp: {
+          name: str,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    }
     // if(!isClicked) setStampCount(count+1);
     // else setStampCount(stampCount-1);
     // setIsClicked(!isClicked);
