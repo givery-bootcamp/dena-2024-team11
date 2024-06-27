@@ -131,26 +131,21 @@ export function InputBox({parentId}: InputBoxProps) {
     return <div></div>;
   } 
   return (
-    <form onSubmit={handleSubmit}>
-    <input 
-      type="text" 
-      value={filterText} 
-      placeholder="Search..."
-      onChange={(e) => setFilterText(e.target.value)}
-    />
-    <input
-      type="submit"
-      value="Submit"
-    />
-      
-    {/* <label>
-      <input 
-        type="checkbox" 
-        checked={inStockOnly} />
-      {' '}
-      Only show products in stock
-    </label> */}
-  </form>
+    <form className="input-form" onSubmit={handleSubmit}>
+      <textarea
+        className="input-text"
+        // type="text"
+        value={filterText} 
+        placeholder="Srackへのメッセージ"
+        onChange={(e) => setFilterText(e.target.value)}
+      />
+      <input
+        className="submit-button"
+        type="image"
+        name="submit"
+        src="images/submit.png"
+      />
+    </form>
   );
 }
 
