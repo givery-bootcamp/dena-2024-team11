@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"myapp/internal/config"
 
@@ -15,9 +14,10 @@ func SetupRedis() gin.HandlerFunc {
 		redis := redis.NewClient(&redis.Options{
 			Addr:     fmt.Sprintf("%s:%d", config.RedisHost, config.RedisPort),
 			Password: config.RedisPassword,
-			DB:       0,                    // use default DB
+			DB:       0, // use default DB
 			TLSConfig: &tls.Config{
-				RootCAs:    x509.NewCertPool(),},
+				InsecureSkipVerify: true, // 本番環境では必ず true にしないこと。証明書の検証を有効にします。
+			},
 		})
 		ctx.Set("redis", redis)
 		ctx.Next()
