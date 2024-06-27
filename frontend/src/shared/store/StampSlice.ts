@@ -51,10 +51,32 @@ export const stampSlice = createSlice({
                     stamps: [action.payload.stamp],
                 });
             }
-        }
-        // RemoveStamp: (state, action) => {
+        },
+        RemoveStamp: (state, action) => {
+            state.postStamps = state.postStamps.map(postStamp => {
+                if(postStamp.postId === action.payload.postId) {
+                    const stamps = postStamp.stamps;
+                    let stampIncluded = true;
+                    const nextStamps = stamps.map(stamp => {
+                        if(stamp.name === action.payload.stamp.name) {
+                            // stampIncluded = true;
+                            return {
+                                name: action.payload.stamp.name,
+                                isIncluded: false,
+                                count: stamp.count - 1,
+                            }
+                        }
+                        return stamp;
+                    });
+                    return {
+                        postId: action.payload.postId,
+                        stamps: nextStamps,
+                    }
+                }
+                return postStamp;
+            });
             
-        // }
+        }
     },
 });
 

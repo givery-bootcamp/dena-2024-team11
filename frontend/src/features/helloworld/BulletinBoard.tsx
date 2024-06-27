@@ -194,19 +194,20 @@ export function MessageItem ({str} : {str:string}) {
 }
 
 export function ReactionButton ({str, isIncluded, count} : {str:string, isIncluded:boolean, count:number}) {
-  const [isClicked, setIsClicked] = useState(isIncluded);
-  const [stampCount, setStampCount] = useState(count);
+  // const [isClicked, setIsClicked] = useState(isIncluded);
+  // const [stampCount, setStampCount] = useState(count);
   function onClick() {
     //本来はここでAPIを叩き、結果に応じて処理を分ける
-    if(!isClicked) setStampCount(stampCount+1);
-    else setStampCount(stampCount-1);
-    setIsClicked(!isClicked);
+    console.log("clicked");
+    // if(!isClicked) setStampCount(count+1);
+    // else setStampCount(stampCount-1);
+    // setIsClicked(!isClicked);
   }
   return (
-    <button className={"scalable-button stamp-button " + (isClicked ? "after-click-stamp" : "before-click-stamp")} onClick={onClick}>
+    <button className={"scalable-button stamp-button " + (isIncluded ? "after-click-stamp" : "before-click-stamp")} onClick={onClick}>
       <img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/>
-      <div className={isClicked ? "after-click-count-block" : "before-click-count-block"}>
-        <span>{stampCount}</span>
+      <div className={isIncluded ? "after-click-count-block" : "before-click-count-block"}>
+        <span>{count}</span>
       </div>
     </button> 
   );
@@ -293,17 +294,52 @@ export function AddStampModal({stamps, position}: {stamps: string[], position: {
 export function StampItem({stampName, postId}: {stampName: string, postId: number}) {
   const dispatch = useAppDispatch();
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
+  const postStamps = useAppSelector((state) => state.stamp.postStamps);
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
-    dispatch(actions.AddStamp({
-      postId: postId,
-      stamp: {
-        name: stampName,
-        isIncluded: true,
-        count: 1,
-      },
-    }));
+    const postStamp = postStamps.find(postStamp => postStamp.postId === postId);
+    const stamp = postStamp?.stamps.find(stamp => stamp.name === stampName);
+    if (postStamp === undefined) {
+      dispatch(actions.AddStamp({
+        postId: postId,
+        stamp: {
+          name: stampName,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    } else if (stamp === undefined) {
+      dispatch(actions.AddStamp({
+        postId: postId,
+        stamp: {
+          name: stampName,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    } else if (!stamp.isIncluded) {
+      dispatch(actions.AddStamp({
+        postId: postId,
+        stamp: {
+          name: stampName,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    } else if (stamp.isIncluded) {
+      dispatch(actions.RemoveStamp({
+        postId: postId,
+        stamp: {
+          name: stampName,
+          isIncluded: false,
+          count: 0,
+        },
+      }));
+
+    };
+
+
 
     dispatch(actions.ShowModal({
       showModal: false,
