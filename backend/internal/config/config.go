@@ -46,7 +46,7 @@ func init() {
 		RedisHost = v
 	}
 	if v, err := strconv.ParseInt(os.Getenv("REDIS_PORT"), 10, 64); err == nil {
-		DBPort = int(v)
+		RedisPort = int(v)
 	}
 	if v := os.Getenv("REDIS_PASSWORD"); v != "" {
 		RedisPassword = v
