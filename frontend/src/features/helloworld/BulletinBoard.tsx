@@ -32,6 +32,37 @@ export function BulletinBoard() {
   const showModal = useAppSelector((state) => state.modal.showModal);
   const modalInfo = useAppSelector((state) => state.modal.modalInfo);
   const dispatch = useAppDispatch();
+  const stamps = [
+    "saikou", 
+    "akebono", 
+    "madamada",
+    "emoji",
+    "yonezawa",
+    "gyokairui",
+    "nigeteiiyo",
+    "tamanegi",
+    "togyushi",
+    "shishamo",
+    "curtain",
+    "radiotaisou",
+    "huyuhanabe",
+    "toripaitan",
+    "nureginu",
+    "nurumenoonsen",
+    "yonsama",
+    "mokkouyoubondo",
+    "kochujan",
+    "itiran",
+    "sonnanokankeinee",
+    "sorehakankeiaru",
+    "kinouhagomen",
+    "tuyomenopanti",
+    "zukounosensei",
+    "kodomogatabeteru",
+    "totyuudesyouga",
+    "obondegohan",
+    "zaurusu"
+  ];
   useEffect(() => {
     dispatch(APIService.getBoard());
     if (selectedThreadId === null) {
@@ -41,7 +72,7 @@ export function BulletinBoard() {
   }, [dispatch]);
   return (
     <div>
-      {showModal && <AddStampModal stamps={["saikou", "akebono", "madamada"]} modalInfo={modalInfo}/>}
+      {showModal && <AddStampModal stamps={stamps} modalInfo={modalInfo}/>}
       <div className="bulletin-with-thread">
         <div className="bulletin-board">
           <PostList posts={noparents}/>
