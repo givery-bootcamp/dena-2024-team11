@@ -123,26 +123,28 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  // const stamps = ["saikou", "akebono", "madamada"];
-  const stamps = [
-    {
-      name: "saikou",
-      isIncluded: true,
-      count: 2,
-    },
-    {
-      name: "akebono",
-      isIncluded: false,
-      count: 3,
-    },
-    {
-      name: "madamada",
-      isIncluded: false,
-      count: 2,
-    }
-  ]
+  const postStamps = useAppSelector((state) => state.stamp.postStamps);
+  const stamps = postStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
+  // if(stamps === undefined) return;
+  // const stamps = [
+  //   {
+  //     name: "saikou",
+  //     isIncluded: false,
+  //     count: 2,
+  //   },
+  //   {
+  //     name: "akebono",
+  //     isIncluded: false,
+  //     count: 3,
+  //   },
+  //   {
+  //     name: "madamada",
+  //     isIncluded: false,
+  //     count: 2,
+  //   }
+  // ]
 
-  const reactionButtons = stamps.map((stamp, index) => {
+  const reactionButtons = stamps?.map((stamp, index) => {
     return (
       <li key={index.toString()}>
         <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count}/>
@@ -288,8 +290,19 @@ export function AddStampModal({stamps, position}: {stamps: string[], position: {
 }
 
 export function StampItem({stampName}: {stampName: string}) {
+  const dispatch = useAppDispatch();
+  // const postStamps = useAppSelector((state) => state.stamp.postStamps);
   function onClick() {
-    alert(`hello, ${stampName}`);
+    // alert(`hello, ${stampName}`);
+    //本当はここでストアを評価して、自分が押したかどうかを調べる
+    dispatch(actions.AddStamp({
+      postId: 1,
+      stamp: {
+        name: stampName,
+        isIncluded: true,
+        count: 1,
+      },
+    }));
   }
   return (
     <button className="stamp-item-button" onClick={onClick}>
