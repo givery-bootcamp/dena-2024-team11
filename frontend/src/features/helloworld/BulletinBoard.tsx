@@ -289,7 +289,7 @@ export function AddStampModal({stamps, modalInfo}: {stamps: string[], modalInfo:
   const modalWidth = 300;
   const modalHeight = 500;
   const modalTop = Math.max(modalInfo.position.top - modalHeight - 10 + window.scrollY, 10 + window.scrollY);
-  const modalLeft = Math.min(modalInfo.position.left + window.scrollX, 2000 + window.scrollX);
+  const modalLeft = Math.min(modalInfo.position.left + window.scrollX + 100, window.innerWidth - modalWidth - 10 + window.scrollX);
   const reactionButtons = stamps.map((reaction, index) => {
     return (
       modalInfo.post && 
