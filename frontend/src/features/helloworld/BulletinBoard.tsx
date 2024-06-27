@@ -47,11 +47,18 @@ export function BulletinBoard() {
           <PostList posts={noparents}/>
           <InputBox parentId={-1}/>
         </div>
-        <div>
-          <PostList posts={parentPost} isThread={true}/>
-          <PostList posts={childs} />
-          <InputBox parentId={selectedThreadId}/>        
-        </div>
+        { (selectedThreadId !== null) && (
+          <div className="bulletin-thread" >
+            <div className="thread-title">スレッド</div>
+            <PostList posts={parentPost} isThread={true}/>
+            <div className="reply-line">
+              <div className="reply-line-text">{childs.length.toString()} 件の返信 </div>
+              <hr className="border-line"/>
+            </div>
+            <PostList posts={childs} />
+            <InputBox parentId={selectedThreadId}/>        
+         </div> 
+        )}
       </div>
     </div>
   );

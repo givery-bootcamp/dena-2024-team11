@@ -1,7 +1,30 @@
 .bulletin-with-thread {
     display: flex;
-};
+    width: 100vw;
+    
+}
 
+.bulletin-board {
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 60%;
+}
+
+.bulletin-thread {
+    // border-left: 1px solid rgb(195, 195, 195);
+    box-sizing: border-box;
+    box-shadow: -4px 0px 10px rgb(195, 195, 195);
+    padding-top: 20px;
+    padding-left: 20px;
+    width: 40%;
+    
+}
+
+.thread-title {
+    font-weight: bold;
+    font-size: 20px;
+    padding-bottom: 10px;
+}
 .post-list {
     list-style: none;
     padding: 0px;
@@ -431,4 +454,22 @@
 .stamp-item-image {
     width: 50px;
     height: 50px;
+}
+
+.reply-line {
+    display: flex;
+    flex-direction: row;   
+    align-items: center;
+    // width: 80%;
+}
+.reply-line-text {
+    color: rgb(50, 50, 50);
+    font-weight: 300;
+}
+.border-line {
+    flex-grow: 1;
+    border-top: 1px solid rgb(49, 49, 49);
+    margin-left: 5%;
+    margin-right: 5%;
+
 }
