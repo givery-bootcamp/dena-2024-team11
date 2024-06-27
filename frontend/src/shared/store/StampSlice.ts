@@ -3,10 +3,12 @@ import { Stamp } from '../models';
 
 export type StampState = {
     postStamps: {postId: number, stamps: Stamp[]}[];
+    replyStamps: {postId: number, stamps: Stamp[]}[];
 };
 
 export const initialState: StampState = {
     postStamps: [],
+    replyStamps: [],
 };
 
 export const stampSlice = createSlice({
@@ -15,7 +17,13 @@ export const stampSlice = createSlice({
     reducers: {
         AddStamp: (state, action) => {
             let isIncluded = false;
-            state.postStamps = state.postStamps.map(postStamp => {
+            let postStamps = state.postStamps;
+            if(action.payload.type === "post") {
+                postStamps = state.postStamps;
+                console.log("type post");
+            }
+            else if(action.payload.type === "reply") postStamps = state.replyStamps;
+            postStamps = postStamps.map(postStamp => {
                 if(postStamp.postId === action.payload.postId) {
                     isIncluded = true;
                     const stamps = postStamp.stamps;
@@ -46,11 +54,16 @@ export const stampSlice = createSlice({
                 return postStamp;
             });
             if(!isIncluded) {
-                state.postStamps.push({
-                    postId: action.payload.postId,
-                    stamps: [action.payload.stamp],
-                });
+                postStamps = [
+                    ...postStamps,
+                    {
+                        postId: action.payload.postId,
+                        stamps: [action.payload.stamp],
+                    }
+                ];
             }
+            if(action.payload.type === "post") state.postStamps = postStamps;
+            else if(action.payload.type === "reply") state.replyStamps = postStamps;
         },
         RemoveStamp: (state, action) => {
             state.postStamps = state.postStamps.map(postStamp => {

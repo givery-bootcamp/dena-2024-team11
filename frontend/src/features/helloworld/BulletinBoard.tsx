@@ -147,7 +147,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
   const reactionButtons = stamps?.map((stamp, index) => {
     return (
       <li key={index.toString()}>
-        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} postId={post.id}/>
+        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} post={post}/>
       </li>
     )
   })
@@ -193,16 +193,16 @@ export function MessageItem ({str} : {str:string}) {
   return <div>{str}</div>
 }
 
-export function ReactionButton ({str, isIncluded, count, postId} : {str:string, isIncluded:boolean, count:number, postId:number}) {
+export function ReactionButton ({str, isIncluded, count, post} : {str:string, isIncluded:boolean, count:number, post:BoardElement}) {
   // const [isClicked, setIsClicked] = useState(isIncluded);
   // const [stampCount, setStampCount] = useState(count);
   const dispatch = useAppDispatch();
+  const type = "post";
   function onClick() {
-    //本来はここでAPIを叩き、結果に応じて処理を分ける
-    console.log("clicked");
     if (isIncluded) {
       dispatch(actions.RemoveStamp({
-        postId: postId,
+        type: type,
+        postId: post.id,
         stamp: {
           name: str,
           isIncluded: false,
@@ -211,7 +211,8 @@ export function ReactionButton ({str, isIncluded, count, postId} : {str:string, 
       }));
     } else {
       dispatch(actions.AddStamp({
-        postId: postId,
+        type: type,
+        postId: post.id,
         stamp: {
           name: str,
           isIncluded: true,
@@ -315,13 +316,16 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
   const dispatch = useAppDispatch();
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
   const postStamps = useAppSelector((state) => state.stamp.postStamps);
+  const type = "post";
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
     const postStamp = postStamps.find(postStamp => postStamp.postId === postId);
     const stamp = postStamp?.stamps.find(stamp => stamp.name === stampName);
     if (postStamp === undefined) {
+      console.log("dispatch add stamp");
       dispatch(actions.AddStamp({
+        type: type,
         postId: postId,
         stamp: {
           name: stampName,
@@ -331,6 +335,7 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
       }));
     } else if (stamp === undefined) {
       dispatch(actions.AddStamp({
+        type: type,
         postId: postId,
         stamp: {
           name: stampName,
@@ -340,6 +345,7 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
       }));
     } else if (!stamp.isIncluded) {
       dispatch(actions.AddStamp({
+        type: type,
         postId: postId,
         stamp: {
           name: stampName,
@@ -349,6 +355,7 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
       }));
     } else if (stamp.isIncluded) {
       dispatch(actions.RemoveStamp({
+        type: type,
         postId: postId,
         stamp: {
           name: stampName,
@@ -356,12 +363,10 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
           count: 0,
         },
       }));
-
-    };
-
-
+    }
 
     dispatch(actions.ShowModal({
+      type: type,
       showModal: false,
       position: {
         top: 0,
