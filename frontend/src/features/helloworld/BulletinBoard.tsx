@@ -167,7 +167,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
               <ul className="message-stamp-list">
                 {reactionButtons}
                 <li key="add">
-                  <AddReactionButton/>
+                  <AddReactionButton postId={post.id}/>
                 </li>
               </ul>
               {/* <img className="message-stamp-image" src="/images/thumbsup.png"></img>
@@ -212,7 +212,7 @@ export function ReactionButton ({str, isIncluded, count} : {str:string, isInclud
   );
 }
 
-export function AddReactionButton() {
+export function AddReactionButton({postId}: {postId: number}) {
   const [isHover, setIsHover] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
@@ -234,6 +234,7 @@ export function AddReactionButton() {
       position: {
         top: top,
         left: left,
+        postId: postId,
       }
     }));
   }
@@ -249,17 +250,17 @@ export function AddReactionButton() {
   );
 }
 
-export function AddStampModal({stamps, position}: {stamps: string[], position: {top: number, left: number}}) {
+export function AddStampModal({stamps, position}: {stamps: string[], position: {top: number, left: number, postId: number}}) {
   const dispatch = useAppDispatch();
   const modalRef = useRef<HTMLDivElement>(null);
   const modalWidth = 300;
   const modalHeight = 500;
   const modalTop = Math.max(position.top - modalHeight - 10 + window.scrollY, 10 + window.scrollY);
-  const modalLeft = Math.max(position.left + window.scrollX, 200 + window.scrollX);
+  const modalLeft = Math.min(position.left + window.scrollX, 2000 + window.scrollX);
   const reactionButtons = stamps.map((reaction, index) => {
     return (
       <li key={index.toString()}>
-        <StampItem stampName={reaction}/>
+        <StampItem stampName={reaction} postId={position.postId}/>
       </li>
     )
   });
@@ -289,14 +290,14 @@ export function AddStampModal({stamps, position}: {stamps: string[], position: {
   );
 }
 
-export function StampItem({stampName}: {stampName: string}) {
+export function StampItem({stampName, postId}: {stampName: string, postId: number}) {
   const dispatch = useAppDispatch();
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
     dispatch(actions.AddStamp({
-      postId: 1,
+      postId: postId,
       stamp: {
         name: stampName,
         isIncluded: true,
