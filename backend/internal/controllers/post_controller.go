@@ -46,26 +46,26 @@ func PostPosts(ctx *gin.Context) {
 }
 
 func convertPostStampsToStamps(postStamps []*entities.Stamp) []response.Stamp {
-    stampMap := make(map[string]map[int]struct{})
-    for _, ps := range postStamps {
-        key := ps.Name
-        if _, exists := stampMap[key]; !exists {
-            stampMap[key] = make(map[int]struct{})
-        }
-        stampMap[key][ps.User.Id] = struct{}{}
-    }
+	stampMap := make(map[string]map[int]struct{})
+	for _, ps := range postStamps {
+		key := ps.Name
+		if _, exists := stampMap[key]; !exists {
+			stampMap[key] = make(map[int]struct{})
+		}
+		stampMap[key][ps.User.Id] = struct{}{}
+	}
 
-    var stamps []response.Stamp
-    for name, users := range stampMap {
-        userIds := make([]int, 0, len(users))
-        for userId := range users {
-            userIds = append(userIds, userId)
-        }
-        stamps = append(stamps, response.Stamp{
-            Name:    name,
-            UserIds: userIds,
-            Count:   len(userIds),
-        })
-    }
-    return stamps
+	var stamps []response.Stamp
+	for name, users := range stampMap {
+		userIds := make([]int, 0, len(users))
+		for userId := range users {
+			userIds = append(userIds, userId)
+		}
+		stamps = append(stamps, response.Stamp{
+			Name:    name,
+			UserIds: userIds,
+			Count:   len(userIds),
+		})
+	}
+	return stamps
 }
