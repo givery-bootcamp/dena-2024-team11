@@ -14,12 +14,15 @@
   align-items: center;
   background: #480c44;
   color: $white;
-  height: 3rem;
+  height: 4rem;
   padding: 0 1rem;
+  font-weight: 700;
+  font-size: 18px;
 }
 
 .app-body {
   // display: flex;
-  flex-grow: 1;
+  flex: 1;
+  height: 500px;
   background: $white;
 }

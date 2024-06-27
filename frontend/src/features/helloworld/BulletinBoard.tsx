@@ -70,20 +70,27 @@ export function BulletinBoard() {
     }
     dispatch(APIService.getReplies(selectedThreadId));
   }, [dispatch]);
+
+  const ref = useRef<HTMLDivElement>(null);
+
   return (
-    <div>
+    <div className="board-with-modal">
       {showModal && <AddStampModal stamps={stamps} modalInfo={modalInfo}/>}
       <div className="bulletin-with-thread">
         <div className="bulletin-board">
-          <PostList posts={noparents}/>
-          <InputBox parentId={-1}/>
+          <div className="scroll-board" ref={ref}>
+            <PostList posts={noparents}/>
+          </div>
+          <div className="input-areà">
+            <InputBox parentId={-1}/>
+          </div>
         </div>
         { (selectedThreadId !== null) && (
           <div className="bulletin-thread" >
             <div className="thread-title">スレッド</div>
             <PostList posts={parentPost} isThread={true}/>
             <div className="reply-line">
-              <div className="reply-line-text">{childs.length.toString()} 件の返信 </div>
+              <div className="reply-line-text">{childs.length.toString()} 件の返信</div>
               <hr className="border-line"/>
             </div>
             <PostList posts={childs} />
@@ -114,7 +121,16 @@ export function PostList({ posts, isThread = false }: PostProps) {
 
 export function InputBox({parentId}: InputBoxProps) {
   const [filterText, setFilterText] = useState('');
+  const [isHover, setIsHover] = useState(false);
   const dispatch = useAppDispatch();
+
+  function onMouseEnter() {
+    setIsHover(true);
+  }
+  function onMouseLeave() {
+    setIsHover(false);
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (parentId === null) {
@@ -144,7 +160,9 @@ export function InputBox({parentId}: InputBoxProps) {
         className="submit-button"
         type="image"
         name="submit"
-        src="images/submit.png"
+        src={"images/submit" + (isHover ? "_hover" : "") + ".png"}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       />
     </form>
   );
@@ -186,7 +204,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
         <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} post={post}/>
       </li>
     )
-  })
+  });
 
   return (
         <div className="message-block">
