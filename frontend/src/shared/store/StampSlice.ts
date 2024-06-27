@@ -18,10 +18,7 @@ export const stampSlice = createSlice({
         AddStamp: (state, action) => {
             let isIncluded = false;
             let postStamps = state.postStamps;
-            if(action.payload.type === "post") {
-                postStamps = state.postStamps;
-                console.log("type post");
-            }
+            if(action.payload.type === "post") postStamps = state.postStamps;
             else if(action.payload.type === "reply") postStamps = state.replyStamps;
             postStamps = postStamps.map(postStamp => {
                 if(postStamp.postId === action.payload.postId) {
@@ -66,7 +63,10 @@ export const stampSlice = createSlice({
             else if(action.payload.type === "reply") state.replyStamps = postStamps;
         },
         RemoveStamp: (state, action) => {
-            state.postStamps = state.postStamps.map(postStamp => {
+            let postStamps = state.postStamps;
+            if(action.payload.type === "post") postStamps = state.postStamps;
+            else if(action.payload.type === "reply") postStamps = state.replyStamps;
+            postStamps = postStamps.map(postStamp => {
                 if(postStamp.postId === action.payload.postId) {
                     const stamps = postStamp.stamps;
                     let nextStamps = stamps.map(stamp => {
@@ -84,11 +84,11 @@ export const stampSlice = createSlice({
                         postId: action.payload.postId,
                         stamps: nextStamps,
                     }
-                    
                 }
                 return postStamp;
             });
-            
+            if(action.payload.type === "post") state.postStamps = postStamps;
+            else if(action.payload.type === "reply") state.replyStamps = postStamps;
         }
     },
 });
