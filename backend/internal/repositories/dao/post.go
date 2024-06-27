@@ -12,8 +12,9 @@ type Post struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	User User `gorm:"foreignKey:user_id"`
-	Replies []*Reply 
+	User User `gorm:"foreignKey:UserId"`	
+	Replies []*Reply
+	Stamps []*PostStamp
 }
 
 func (p *Post) ToEntity() *entities.Post {
@@ -21,6 +22,12 @@ func (p *Post) ToEntity() *entities.Post {
 	for _, reply := range p.Replies {
 		replies = append(replies, reply.ToEntity())
 	}
+
+	Stamps := []*entities.Stamp{}
+	for _, postStamp := range p.Stamps {
+		Stamps = append(Stamps, postStamp.ToEntity())
+	}
+
 	return &entities.Post{
 		Id:        p.Id,
 		Content:   p.Content,
@@ -28,5 +35,6 @@ func (p *Post) ToEntity() *entities.Post {
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
 		Replies:  replies,
+		Stamps: Stamps,
 	}
 }

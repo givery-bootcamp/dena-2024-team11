@@ -20,7 +20,7 @@ func NewPostRepository(conn *gorm.DB) *PostRepository {
 
 func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
 	var posts []*dao.Post
-	if err := r.Conn.Preload("Replies").Preload("User").Find(&posts).Error; err != nil {
+	if err := r.Conn.Preload("Replies").Preload("User").Preload("Stamps").Find(&posts).Error; err != nil {
 		return nil, err
 	}
    
