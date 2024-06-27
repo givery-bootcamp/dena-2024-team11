@@ -1,8 +1,8 @@
 import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
-import { useState, useEffect } from 'react';
-import { BoardElement } from "../../shared/models";
+import { useState, useEffect, useRef, CSSProperties } from 'react';
+import { BoardElement, ModalInfo } from "../../shared/models";
 import { actions } from "../../shared/store";
 
 type PostProps = {
@@ -29,6 +29,8 @@ export function BulletinBoard() {
   const selectedThreadId = useAppSelector((state) => state.thread.SelectedThreadId);
   const childs = replies.filter((post) => post.parentId === selectedThreadId);
   const parentPost = posts.filter((post) => post.id === selectedThreadId);
+  const showModal = useAppSelector((state) => state.modal.showModal);
+  const modalInfo = useAppSelector((state) => state.modal.modalInfo);
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(APIService.getBoard());
@@ -38,15 +40,18 @@ export function BulletinBoard() {
     dispatch(APIService.getReplies(selectedThreadId));
   }, [dispatch]);
   return (
-    <div className="bulletin-with-thread">
-      <div className="bulletin-board">
-        <PostList posts={noparents}/>
-        <InputBox parentId={-1}/>
-      </div>
-      <div>
-        <PostList posts={parentPost} isThread={true}/>
-        <PostList posts={childs} />
-        <InputBox parentId={selectedThreadId}/>        
+    <div>
+      {showModal && <AddStampModal stamps={["saikou", "akebono", "madamada"]} modalInfo={modalInfo}/>}
+      <div className="bulletin-with-thread">
+        <div className="bulletin-board">
+          <PostList posts={noparents}/>
+          <InputBox parentId={-1}/>
+        </div>
+        <div>
+          <PostList posts={parentPost} isThread={true}/>
+          <PostList posts={childs} />
+          <InputBox parentId={selectedThreadId}/>        
+        </div>
       </div>
     </div>
   );
@@ -98,8 +103,6 @@ export function InputBox({parentId}: InputBoxProps) {
     <input
       type="submit"
       value="Submit"
-      
-
     />
       
     {/* <label>
@@ -118,6 +121,39 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // function resetParentId() {
   //   return post.parentId;
   // }
+
+  //本来はpostからreactionを取得
+  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  const stamps = post.parentId === -1 ? 
+    postStamps.find(postStamp => postStamp.postId === post.id)?.stamps :
+    replyStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
+  // if(stamps === undefined) return;
+  // const stamps = [
+  //   {
+  //     name: "saikou",
+  //     isIncluded: false,
+  //     count: 2,
+  //   },
+  //   {
+  //     name: "akebono",
+  //     isIncluded: false,
+  //     count: 3,
+  //   },
+  //   {
+  //     name: "madamada",
+  //     isIncluded: false,
+  //     count: 2,
+  //   }
+  // ]
+
+  const reactionButtons = stamps?.map((stamp, index) => {
+    return (
+      <li key={index.toString()}>
+        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} post={post}/>
+      </li>
+    )
+  })
+
   return (
         <div className="message-block">
           <img className="message-author-image" src="/images/tanigawa.png"></img>
@@ -130,8 +166,15 @@ export function PostItem({ post, isThread }: PostItemProps) {
               <MessageItem str={post.message}/>
             </div>
             <div className="message-stamp-block">
-              <img className="message-stamp-image" src="/images/thumbsup.png"></img>
-              <img className="message-stamp-add" src="/images/stamp.png"></img>
+              <ul className="message-stamp-list">
+                {reactionButtons}
+                <li key="add">
+                  <AddReactionButton post={post}/>
+                </li>
+              </ul>
+              {/* <img className="message-stamp-image" src="/images/thumbsup.png"></img>
+              <img className="message-stamp-add" src="/images/stamp.png"></img> */}
+              {/* <ReactionButton str="emoji"/> */}
             </div>
             {isThread || post.parentId === -1 && <div className="message-reply-block">
               <img className="message-reply-image1" src="/images/chono.png"></img>
@@ -150,5 +193,201 @@ export function PostItem({ post, isThread }: PostItemProps) {
 
 export function MessageItem ({str} : {str:string}) {
   return <div>{str}</div>
+}
+
+export function ReactionButton ({str, isIncluded, count, post} : {str:string, isIncluded:boolean, count:number, post:BoardElement}) {
+  // const [isClicked, setIsClicked] = useState(isIncluded);
+  // const [stampCount, setStampCount] = useState(count);
+  const dispatch = useAppDispatch();
+  const type = post.parentId === -1 ? "post" : "reply";
+  function onClick() {
+    if (isIncluded) {
+      dispatch(actions.RemoveStamp({
+        type: type,
+        postId: post.id,
+        stamp: {
+          name: str,
+          isIncluded: false,
+          count: -1,
+        },
+      }));
+    } else {
+      dispatch(actions.AddStamp({
+        type: type,
+        postId: post.id,
+        stamp: {
+          name: str,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    }
+    // if(!isClicked) setStampCount(count+1);
+    // else setStampCount(stampCount-1);
+    // setIsClicked(!isClicked);
+  }
+  return (
+    <button className={"scalable-button stamp-button " + (isIncluded ? "after-click-stamp" : "before-click-stamp")} onClick={onClick}>
+      <img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/>
+      <div className={isIncluded ? "after-click-count-block" : "before-click-count-block"}>
+        <span>{count}</span>
+      </div>
+    </button> 
+  );
+}
+
+export function AddReactionButton({post}: {post: BoardElement}) {
+  const [isHover, setIsHover] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
+  const dispatch = useAppDispatch();
+
+  function onMouseEnter() {
+    setIsHover(true);
+  }
+  function onMouseLeave() {
+    setIsHover(false);
+  }
+
+  function onClick() {
+    const rect = ref.current?.getBoundingClientRect();
+    if(rect?.top === undefined && rect?.left === undefined) return;
+    const top = rect?.top;
+    const left = rect?.left;
+    dispatch(actions.ShowModal({
+      showModal: true,
+      modalInfo: {
+        post: post,
+        position: {
+          top: top,
+          left: left,
+        }
+      }
+    }));
+  }
+
+  return (
+    <button className={"scalable-button stamp-button add-stamp"}
+      ref={ref}
+      onMouseEnter={onMouseEnter} 
+      onMouseLeave={onMouseLeave}
+      onClick={onClick}>
+      <img className="emoji-block" src={"/images/_face" + (isHover ? "_hover" : "") + ".png"} alt="add stamp"/>
+    </button> 
+  );
+}
+
+export function AddStampModal({stamps, modalInfo}: {stamps: string[], modalInfo: ModalInfo}) {
+  const dispatch = useAppDispatch();
+  const modalRef = useRef<HTMLDivElement>(null);
+  const modalWidth = 300;
+  const modalHeight = 500;
+  const modalTop = Math.max(modalInfo.position.top - modalHeight - 10 + window.scrollY, 10 + window.scrollY);
+  const modalLeft = Math.min(modalInfo.position.left + window.scrollX, 2000 + window.scrollX);
+  const reactionButtons = stamps.map((reaction, index) => {
+    return (
+      modalInfo.post && 
+      <li key={index.toString()}>
+        <StampItem stampName={reaction} post={modalInfo.post}/>
+      </li>
+    )
+  });
+  function onMouseDown(e: React.MouseEvent) {
+    if(modalRef.current?.contains(e.target as Node)) return;
+    dispatch(actions.ShowModal({
+      showModal: false,
+      modalInfo: {
+        post: null,
+        position: {
+          top: 0,
+          left: 0,
+        }
+      }
+    }));
+  }
+  const modalStyle:CSSProperties = {
+    position: 'absolute',
+    top: `${modalTop}px`,
+    left: `${modalLeft}px`,
+    width: `${modalWidth}px`,
+    height: `${modalHeight}px`,
+  }
+  return (
+    <div className="overlay" onMouseDown={onMouseDown}>
+      <div className="modal-modal" style={modalStyle}  ref={modalRef}>
+        <ul className="modal-stamp-list">{reactionButtons}</ul>
+      </div>
+    </div>
+  );
+}
+
+export function StampItem({stampName, post}: {stampName: string, post: BoardElement}) {
+  const dispatch = useAppDispatch();
+  // const postStamps = useAppSelector((state) => state.stamp.postStamps);
+  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  const type = post.parentId === -1 ? "post" : "reply";
+  function onClick() {
+    // alert(`hello, ${stampName}`);
+    //本当はここでストアを評価して、自分が押したかどうかを調べる
+    const stamps = type === "post" ? postStamps : replyStamps;
+    const postStamp = stamps.find(postStamp => postStamp.postId === post.id);
+    const stamp = postStamp?.stamps.find(stamp => stamp.name === stampName);
+    if (postStamp === undefined) {
+      dispatch(actions.AddStamp({
+        type: type,
+        postId: post.id,
+        stamp: {
+          name: stampName,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    } else if (stamp === undefined) {
+      dispatch(actions.AddStamp({
+        type: type,
+        postId: post.id,
+        stamp: {
+          name: stampName,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    } else if (!stamp.isIncluded) {
+      dispatch(actions.AddStamp({
+        type: type,
+        postId: post.id,
+        stamp: {
+          name: stampName,
+          isIncluded: true,
+          count: 1,
+        },
+      }));
+    } else if (stamp.isIncluded) {
+      dispatch(actions.RemoveStamp({
+        type: type,
+        postId: post.id,
+        stamp: {
+          name: stampName,
+          isIncluded: false,
+          count: 0,
+        },
+      }));
+    }
+
+    dispatch(actions.ShowModal({
+      showModal: false,
+      modalInfo: {
+        post: post,
+        position: {
+          top: 0,
+          left: 0,
+        }
+      }
+    }));
+  }
+  return (
+    <button className="stamp-item-button" onClick={onClick}>
+      <img className="stamp-item-image" src={"/images/" + stampName + ".png"} alt={stampName}/>
+    </button>
+  )
 }
 
