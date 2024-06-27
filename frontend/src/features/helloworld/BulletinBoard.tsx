@@ -132,9 +132,10 @@ export function InputBox({parentId}: InputBoxProps) {
   } 
   return (
     <form className="input-form" onSubmit={handleSubmit}>
-      <textarea
+      <input
         className="input-text"
-        // type="text"
+        //rows={1}
+        type="text"
         value={filterText} 
         placeholder="Srackへのメッセージ"
         onChange={(e) => setFilterText(e.target.value)}
