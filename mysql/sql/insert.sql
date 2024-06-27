@@ -8,5 +8,9 @@ INSERT INTO replies (user_id, content,post_id) VALUES (1, '返信1\n改行',1);
 INSERT INTO replies (user_id, content,post_id) VALUES (1, '返信2\n改行',2);
 INSERT INTO replies (user_id, content,post_id) VALUES (2, '返信3\n改行',1);
 
-
-
+INSERT INTO post_stamps (name, user_id, post_id) VALUES ("good", 1, 1);
+INSERT INTO post_stamps (name, user_id, post_id) VALUES ("good", 1, 2);
+INSERT INTO post_stamps (name, user_id, post_id) VALUES ("bad", 1, 1);
+INSERT INTO post_stamps (name, user_id, post_id) VALUES ("bad", 2, 1);
+INSERT INTO post_stamps (name, user_id, post_id) VALUES ("soso", 1, 1);
+INSERT INTO post_stamps (name, user_id, post_id) VALUES ("notgood", 2, 1);

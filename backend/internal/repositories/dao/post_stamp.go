@@ -8,12 +8,12 @@ import (
 type PostStamp struct {
 	Name   string
 	UserId    int
-	// PostId    int
+	PostId    int
 	// CreatedAt time.Time
 	// UpdatedAt time.Time
 
 	User User `gorm:"foreignKey:UserId"`
-	// Post Post `gorm:"foreignKey:post_id"`
+	Post Post `gorm:"foreignKey:PostId"`
 }
 
 func (r *PostStamp) ToEntity() *entities.Stamp {

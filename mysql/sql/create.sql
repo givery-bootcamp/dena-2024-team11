@@ -34,3 +34,14 @@ CREATE TABLE IF NOT EXISTS replies(
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (post_id) REFERENCES posts (id)
 );
+
+CREATE TABLE IF NOT EXISTS post_stamps(
+  name       VARCHAR(40)  NOT NULL,
+  user_id    INT          NOT NULL,
+  post_id    INT          NOT NULL,
+  created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at DATETIME     NULL, 
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (post_id) REFERENCES posts (id)
+);
