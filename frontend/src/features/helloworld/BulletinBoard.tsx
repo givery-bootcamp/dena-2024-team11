@@ -2,7 +2,7 @@ import "./BulletinBoard.scss";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { APIService } from "../../shared/services";
 import { useState, useEffect, useRef, CSSProperties } from 'react';
-import { BoardElement } from "../../shared/models";
+import { BoardElement, ModalInfo } from "../../shared/models";
 import { actions } from "../../shared/store";
 
 type PostProps = {
@@ -30,7 +30,7 @@ export function BulletinBoard() {
   const childs = replies.filter((post) => post.parentId === selectedThreadId);
   const parentPost = posts.filter((post) => post.id === selectedThreadId);
   const showModal = useAppSelector((state) => state.modal.showModal);
-  const modalPosition = useAppSelector((state) => state.modal.position);
+  const modalInfo = useAppSelector((state) => state.modal.modalInfo);
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(APIService.getBoard());
@@ -41,7 +41,7 @@ export function BulletinBoard() {
   }, [dispatch]);
   return (
     <div>
-      {showModal && <AddStampModal stamps={["saikou", "akebono", "madamada"]} position={modalPosition}/>}
+      {showModal && <AddStampModal stamps={["saikou", "akebono", "madamada"]} modalInfo={modalInfo}/>}
       <div className="bulletin-with-thread">
         <div className="bulletin-board">
           <PostList posts={noparents}/>
@@ -123,8 +123,10 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  const postStamps = useAppSelector((state) => state.stamp.postStamps);
-  const stamps = postStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
+  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  const stamps = post.parentId === -1 ? 
+    postStamps.find(postStamp => postStamp.postId === post.id)?.stamps :
+    replyStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
   // if(stamps === undefined) return;
   // const stamps = [
   //   {
@@ -167,7 +169,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
               <ul className="message-stamp-list">
                 {reactionButtons}
                 <li key="add">
-                  <AddReactionButton postId={post.id}/>
+                  <AddReactionButton post={post}/>
                 </li>
               </ul>
               {/* <img className="message-stamp-image" src="/images/thumbsup.png"></img>
@@ -197,7 +199,7 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
   // const [isClicked, setIsClicked] = useState(isIncluded);
   // const [stampCount, setStampCount] = useState(count);
   const dispatch = useAppDispatch();
-  const type = "post";
+  const type = post.parentId === -1 ? "post" : "reply";
   function onClick() {
     if (isIncluded) {
       dispatch(actions.RemoveStamp({
@@ -234,7 +236,7 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
   );
 }
 
-export function AddReactionButton({postId}: {postId: number}) {
+export function AddReactionButton({post}: {post: BoardElement}) {
   const [isHover, setIsHover] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
@@ -253,10 +255,12 @@ export function AddReactionButton({postId}: {postId: number}) {
     const left = rect?.left;
     dispatch(actions.ShowModal({
       showModal: true,
-      position: {
-        top: top,
-        left: left,
-        postId: postId,
+      modalInfo: {
+        post: post,
+        position: {
+          top: top,
+          left: left,
+        }
       }
     }));
   }
@@ -272,17 +276,18 @@ export function AddReactionButton({postId}: {postId: number}) {
   );
 }
 
-export function AddStampModal({stamps, position}: {stamps: string[], position: {top: number, left: number, postId: number}}) {
+export function AddStampModal({stamps, modalInfo}: {stamps: string[], modalInfo: ModalInfo}) {
   const dispatch = useAppDispatch();
   const modalRef = useRef<HTMLDivElement>(null);
   const modalWidth = 300;
   const modalHeight = 500;
-  const modalTop = Math.max(position.top - modalHeight - 10 + window.scrollY, 10 + window.scrollY);
-  const modalLeft = Math.min(position.left + window.scrollX, 2000 + window.scrollX);
+  const modalTop = Math.max(modalInfo.position.top - modalHeight - 10 + window.scrollY, 10 + window.scrollY);
+  const modalLeft = Math.min(modalInfo.position.left + window.scrollX, 2000 + window.scrollX);
   const reactionButtons = stamps.map((reaction, index) => {
     return (
+      modalInfo.post && 
       <li key={index.toString()}>
-        <StampItem stampName={reaction} postId={position.postId}/>
+        <StampItem stampName={reaction} post={modalInfo.post}/>
       </li>
     )
   });
@@ -290,9 +295,12 @@ export function AddStampModal({stamps, position}: {stamps: string[], position: {
     if(modalRef.current?.contains(e.target as Node)) return;
     dispatch(actions.ShowModal({
       showModal: false,
-      position: {
-        top: 0,
-        left: 0,
+      modalInfo: {
+        post: null,
+        position: {
+          top: 0,
+          left: 0,
+        }
       }
     }));
   }
@@ -312,21 +320,21 @@ export function AddStampModal({stamps, position}: {stamps: string[], position: {
   );
 }
 
-export function StampItem({stampName, postId}: {stampName: string, postId: number}) {
+export function StampItem({stampName, post}: {stampName: string, post: BoardElement}) {
   const dispatch = useAppDispatch();
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
-  const postStamps = useAppSelector((state) => state.stamp.postStamps);
-  const type = "post";
+  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  const type = post.parentId === -1 ? "post" : "reply";
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
-    const postStamp = postStamps.find(postStamp => postStamp.postId === postId);
+    const stamps = type === "post" ? postStamps : replyStamps;
+    const postStamp = stamps.find(postStamp => postStamp.postId === post.id);
     const stamp = postStamp?.stamps.find(stamp => stamp.name === stampName);
     if (postStamp === undefined) {
-      console.log("dispatch add stamp");
       dispatch(actions.AddStamp({
         type: type,
-        postId: postId,
+        postId: post.id,
         stamp: {
           name: stampName,
           isIncluded: true,
@@ -336,7 +344,7 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
     } else if (stamp === undefined) {
       dispatch(actions.AddStamp({
         type: type,
-        postId: postId,
+        postId: post.id,
         stamp: {
           name: stampName,
           isIncluded: true,
@@ -346,7 +354,7 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
     } else if (!stamp.isIncluded) {
       dispatch(actions.AddStamp({
         type: type,
-        postId: postId,
+        postId: post.id,
         stamp: {
           name: stampName,
           isIncluded: true,
@@ -356,7 +364,7 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
     } else if (stamp.isIncluded) {
       dispatch(actions.RemoveStamp({
         type: type,
-        postId: postId,
+        postId: post.id,
         stamp: {
           name: stampName,
           isIncluded: false,
@@ -366,11 +374,13 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
     }
 
     dispatch(actions.ShowModal({
-      type: type,
       showModal: false,
-      position: {
-        top: 0,
-        left: 0,
+      modalInfo: {
+        post: post,
+        position: {
+          top: 0,
+          left: 0,
+        }
       }
     }));
   }

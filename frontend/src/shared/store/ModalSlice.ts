@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
+import type { ModalInfo } from '../models';
 
 export type ModalState = {
     showModal: boolean;
-    position: {top: number, left: number, postId: number}
+    modalInfo: ModalInfo
 };
 
 export const initialState: ModalState = {
     showModal: false,
-    position: {top: 100, left: 200, postId: 0}
+    modalInfo: {post: null, position: {top: 100, left: 200}}
 };
 
 export const modalSlice = createSlice({
@@ -16,7 +17,8 @@ export const modalSlice = createSlice({
     reducers: {
         ShowModal: (state, action) => {
             state.showModal = action.payload.showModal;
-            state.position = action.payload.position;
+            if(!action.payload.modalInfo.post) return;
+            state.modalInfo = action.payload.modalInfo;
         }
     },
 });
