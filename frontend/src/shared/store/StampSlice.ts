@@ -56,10 +56,8 @@ export const stampSlice = createSlice({
             state.postStamps = state.postStamps.map(postStamp => {
                 if(postStamp.postId === action.payload.postId) {
                     const stamps = postStamp.stamps;
-                    let stampIncluded = true;
-                    const nextStamps = stamps.map(stamp => {
+                    let nextStamps = stamps.map(stamp => {
                         if(stamp.name === action.payload.stamp.name) {
-                            // stampIncluded = true;
                             return {
                                 name: action.payload.stamp.name,
                                 isIncluded: false,
@@ -68,10 +66,12 @@ export const stampSlice = createSlice({
                         }
                         return stamp;
                     });
+                    nextStamps = nextStamps.filter(stamp => stamp.count > 0);
                     return {
                         postId: action.payload.postId,
                         stamps: nextStamps,
                     }
+                    
                 }
                 return postStamp;
             });
