@@ -304,6 +304,14 @@ export function StampItem({stampName, postId}: {stampName: string, postId: numbe
         count: 1,
       },
     }));
+
+    dispatch(actions.ShowModal({
+      showModal: false,
+      position: {
+        top: 0,
+        left: 0,
+      }
+    }));
   }
   return (
     <button className="stamp-item-button" onClick={onClick}>
