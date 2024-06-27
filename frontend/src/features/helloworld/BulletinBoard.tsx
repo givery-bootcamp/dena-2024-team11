@@ -123,12 +123,26 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  const stamps = ["saikou", "akebono", "madamada"];
+  // const stamps = ["saikou", "akebono", "madamada"];
+  const stamps = [
+    {
+      name: "saikou",
+      isIncluded: true,
+    },
+    {
+      name: "akebono",
+      isIncluded: false,
+    },
+    {
+      name: "madamada",
+      isIncluded: false,
+    }
+  ]
 
-  const reactionButtons = stamps.map((reaction, index) => {
+  const reactionButtons = stamps.map((stamp, index) => {
     return (
       <li key={index.toString()}>
-        <ReactionButton str={reaction}/>
+        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded}/>
       </li>
     )
   })
@@ -174,8 +188,8 @@ export function MessageItem ({str} : {str:string}) {
   return <div>{str}</div>
 }
 
-export function ReactionButton ({str} : {str:string}) {
-  const [isClicked, setIsClicked] = useState(false);
+export function ReactionButton ({str, isIncluded} : {str:string, isIncluded:boolean}) {
+  const [isClicked, setIsClicked] = useState(isIncluded);
   const [stampCount, setStampCount] = useState(1);
   function onClick() {
     //本来はここでAPIを叩き、結果に応じて処理を分ける

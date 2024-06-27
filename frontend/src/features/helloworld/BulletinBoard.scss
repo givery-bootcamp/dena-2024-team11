@@ -341,7 +341,10 @@
     color: #252525;
 
     /* Inside auto layout */
-    flex: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //flex: none;
     order: 1;
     flex-grow: 0;
 }
@@ -361,7 +364,10 @@
     color: #0c5893;
 
     /* Inside auto layout */
-    flex: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //flex: none;
     order: 1;
     flex-grow: 0;
 }
