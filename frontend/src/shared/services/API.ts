@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BoardElement, Hello } from '../models';
+import { LoginState } from '../models';
 
 type DbPost = {
   id: number;
@@ -16,7 +17,7 @@ type DbPost = {
     users: number[];
     count: number;
   }[],
-  num_replies: number;
+  num_reply: number;
 };
 
 type DbReply = {
@@ -34,7 +35,17 @@ type DbReply = {
     users: number[];
     count: number;
   }[],
-  num_replies: number;
+  num_reply: number;
+}
+
+type StampActionPayload = {
+  type: string,
+  userId: number,
+  postId: number,
+  stamp: {
+    name: string,
+    count: number,
+  },
 }
 
 // console.log(import.meta.env.VITE_NODE_ENV);
@@ -75,7 +86,7 @@ export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () =>
         message: dbPost.content,
         parentId: -1,
         stamps: dbPost.stamps,
-        num_replies: dbPost.num_replies,
+        num_reply: dbPost.num_reply,
       }
       return newElement;
     });
@@ -106,9 +117,9 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
           icon: dbReply.user.icon,
         },
         message: dbReply.content,
-        parentId: -1,
+        parentId: parentId,
         stamps: dbReply.stamps,
-        num_replies: dbReply.num_replies,
+        num_reply: dbReply.num_reply,
       };
       return newReply;
     })
@@ -116,14 +127,14 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
   }
 );
 
-export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',async (message) => {
+export const postBoard = createAsyncThunk<BoardElement[], {message: string; userId: number}>('postBoard',async ({message, userId}) => {
     const postResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
-        user_id: 1,
+        user_id: userId,
         content: message,
        }),
       mode: "cors",
@@ -159,7 +170,7 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
         message: dbPost.content,
         parentId: -1,
         stamps: dbPost.stamps,
-        num_replies: dbPost.num_replies,
+        num_reply: dbPost.num_reply,
       }
       return newElement;
     })
@@ -167,7 +178,7 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
   }
 );
 
-export const postReply = createAsyncThunk<BoardElement[], {message: string; parentId: number}>('postReply', async ({message, parentId}) => {
+export const postReply = createAsyncThunk<BoardElement[], {message: string; parentId: number, userId: number}>('postReply', async ({message, parentId, userId}) => {
   const postResponse = await fetch(`${API_ENDPOINT_PATH}/replies`, {
     method: 'POST',
     headers: {
@@ -175,7 +186,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
     },
     body: JSON.stringify({ 
       post_id: parentId,
-      user_id: 1,
+      user_id: userId,
       content: message,
     }),
     mode: "cors",
@@ -208,16 +219,16 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
           icon: dbReply.user.icon,
         },
         message: dbReply.content,
-        parentId: -1,
+        parentId: parentId,
         stamps: dbReply.stamps,
-        num_replies: dbReply.num_replies,
+        num_reply: dbReply.num_reply,
     };
     return newReply;
   })
   return boardElementData;
 });
 
-export const loginBoard = createAsyncThunk<boolean, {userId: string; password: string}>('loginBoard', async ({userId, password})=> {
+export const loginBoard = createAsyncThunk<LoginState, {userId: string; password: string}>('loginBoard', async ({userId, password})=> {
   const postResponse = await fetch(`${API_ENDPOINT_PATH}/login`, {
     method: 'POST',
     headers: {
@@ -232,7 +243,150 @@ export const loginBoard = createAsyncThunk<boolean, {userId: string; password: s
   });
   if(!postResponse.ok) {
     console.log("post error");
-    return false;
+    return {
+      isLogin: false,
+      user: {
+        id: -1,
+        name: "",
+        icon: "",
+      }
+    };
   }
-  return true;
+
+  const loginResponse = await postResponse.json();
+  console.log(loginResponse);
+
+  return {
+    isLogin: true,
+    user: {
+      id: loginResponse.id,
+      name: loginResponse.name,
+      icon: loginResponse.icon,
+    }
+  };
+});
+
+export const addStampPost = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('addStampPost', async ({postId, userId, stampName})=> {
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/add/post`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      post_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  // const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "post",
+    userId: userId,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
+});
+
+export const removeStampPost = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('removeStampPost', async ({postId, userId, stampName})=> {
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/remove/post`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      post_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "post",
+    userId: userId,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
+});
+
+export const addStampReply = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('addStampPost', async ({postId, userId, stampName})=> {
+  console.log("stampname " + stampName);
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/add/reply`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      reply_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  // const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "reply",
+    userId: userId,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
+});
+
+export const removeStampReply = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('removeStampPost', async ({postId, userId, stampName})=> {
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/remove/reply`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      reply_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  // const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "reply",
+    userId: userId,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
 });

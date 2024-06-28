@@ -32,6 +32,7 @@ export function BulletinBoard() {
   const showModal = useAppSelector((state) => state.modal.showModal);
   const modalInfo = useAppSelector((state) => state.modal.modalInfo);
   const dispatch = useAppDispatch();
+
   const stamps = [
     "saikou", 
     "akebono", 
@@ -127,6 +128,7 @@ export function InputBox({parentId}: InputBoxProps) {
   const [filterText, setFilterText] = useState('');
   const [isHover, setIsHover] = useState(false);
   const dispatch = useAppDispatch();
+  const userId = useAppSelector(state => state.login.user.id);
 
   function onMouseEnter() {
     setIsHover(true);
@@ -141,9 +143,12 @@ export function InputBox({parentId}: InputBoxProps) {
       return;
     }
     if (parentId > -1) {
-      dispatch(APIService.postReply({message: filterText, parentId: parentId}));
+      dispatch(APIService.postReply({message: filterText, parentId: parentId, userId: userId}));
     } else {
-      dispatch(APIService.postBoard(filterText));
+      dispatch(APIService.postBoard({
+        message: filterText, 
+        userId: userId}
+      ));
     }
     setFilterText("");
   }
@@ -202,19 +207,19 @@ export function PostItem({ post, isThread }: PostItemProps) {
   //     count: 2,
   //   }
   // ]
+  const userId = useAppSelector(state => state.login.user.id);
 
   const reactionButtons = stamps?.map((stamp, index) => {
-    const stampIsIncluded = stamp.users.find(userId => userId === 1) !== undefined;
+    const stampIsIncluded = stamp.users.find(stampUserId => stampUserId === userId) !== undefined;
     return (
       <li key={index.toString()}>
-        <ReactionButton str={stamp.name} isIncluded={stampIsIncluded} count={stamp.count} post={post}/>
+        <ReactionButton stampName={stamp.name} isIncluded={stampIsIncluded} count={stamp.count} post={post}/>
       </li>
     )
   });
-  console.log(post);
   return (
         <div className="message-block">
-          <img className="message-author-image" src="/images/tanigawa.png"></img>
+          <img className="message-author-image" src={post.user.icon || "/images/tanigawa.png"}></img>
           <div className="message-not-image-block">
             <div className="message-author-name">
               {post.id} -&gt; {post.parentId}: 
@@ -235,12 +240,10 @@ export function PostItem({ post, isThread }: PostItemProps) {
               {/* <ReactionButton str="emoji"/> */}
             </div>
             {isThread || post.parentId === -1 && <div className="message-reply-block">
-              <img className="message-reply-image1" src="/images/chono.png"></img>
-              <img className="message-reply-image2" src="/images/tanigawa.png"></img>
               <button className="message-reply-button" onClick={() => {
                 dispatch(actions.SelectThread(post.id));
                 dispatch(APIService.getReplies(post.id));
-              }}>返信する</button>
+              }}>{!post.num_reply ? "返信する" : post.num_reply + "件の返信"}</button>
             </div>}
           </div>
 
@@ -253,35 +256,63 @@ export function MessageItem ({str} : {str:string}) {
   return <div>{str}</div>
 }
 
-export function ReactionButton ({str, isIncluded, count, post} : {str:string, isIncluded:boolean, count:number, post:BoardElement}) {
+export function ReactionButton ({stampName, isIncluded, count, post} : {stampName:string, isIncluded:boolean, count:number, post:BoardElement}) {
   // const [isClicked, setIsClicked] = useState(isIncluded);
   // const [stampCount, setStampCount] = useState(count);
   const dispatch = useAppDispatch();
   const type = post.parentId === -1 ? "post" : "reply";
-  const userId = 1;
+  const userId = useAppSelector((state) => state.login.user.id);
   function onClick() {
     if (isIncluded) {
-      dispatch(actions.RemoveStamp({
-        type: type,
-        userId: userId,
-        postId: post.id,
-        stamp: {
-          name: str,
-          isIncluded: false,
-          count: -1,
-        },
-      }));
+      if(type === "post") {
+        dispatch(APIService.removeStampPost({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      } else if(type === "reply") {
+        dispatch(APIService.removeStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      }
+      // dispatch(actions.RemoveStamp({
+      //   type: type,
+      //   userId: userId,
+      //   postId: post.id,
+      //   stamp: {
+      //     name: stampName,
+      //     isIncluded: false,
+      //     count: -1,
+      //   },
+      // }));
     } else {
-      dispatch(actions.AddStamp({
-        type: type,
-        userId: userId,
-        postId: post.id,
-        stamp: {
-          name: str,
-          isIncluded: true,
-          count: 1,
-        },
-      }));
+      if(type === "post") {
+        dispatch(APIService.addStampPost({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      } else if(type === "reply"){
+        //ToDo:
+        dispatch(APIService.addStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      }
+      // dispatch(
+      //   actions.AddStamp({
+      //   type: type,
+      //   userId: userId,
+      //   postId: post.id,
+      //   stamp: {
+      //     name: str,
+      //     isIncluded: true,
+      //     count: 1,
+      //   },
+      // }));
     }
     // if(!isClicked) setStampCount(count+1);
     // else setStampCount(stampCount-1);
@@ -289,7 +320,7 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
   }
   return (
     <button className={"scalable-button stamp-button " + (isIncluded ? "after-click-stamp" : "before-click-stamp")} onClick={onClick}>
-      <img className="emoji-block" src = {"images/"+ str + ".png"} alt="stamp image"/>
+      <img className="emoji-block" src = {"images/"+ stampName + ".png"} alt="stamp image"/>
       <div className={isIncluded ? "after-click-count-block" : "before-click-count-block"}>
         <span>{count}</span>
       </div>
@@ -386,7 +417,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
   // const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
   const type = post.parentId === -1 ? "post" : "reply";
-  const userId = 1;
+  const userId = useAppSelector((state) => state.login.user.id);
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
@@ -396,38 +427,81 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
     const stamp = stamps.find(stamp => stamp.name === stampName);
     const isIncluded = stamp?.users.find(user => user === userId) !== undefined;
     if (stamp === undefined) {
-      dispatch(actions.AddStamp({
-        type: type,
-        userId: userId,
-        postId: post.id,
-        stamp: {
-          name: stampName,
-          isIncluded: true,
-          count: 1,
-        },
-      }));
+      if(type === "post") {
+        dispatch(APIService.addStampPost({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      } else if(type === "reply") {
+        //ToDO:
+        dispatch(APIService.addStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      }
+
+      // dispatch(actions.AddStamp({
+      //   type: type,
+      //   userId: userId,
+      //   postId: post.id,
+      //   stamp: {
+      //     name: stampName,
+      //     isIncluded: true,
+      //     count: 1,
+      //   },
+      // }));
     } else if (!isIncluded) {
-      dispatch(actions.AddStamp({
-        type: type,
-        userId: userId,
-        postId: post.id,
-        stamp: {
-          name: stampName,
-          isIncluded: true,
-          count: 1,
-        },
-      }));
+      if(type === "post") {
+        dispatch(APIService.addStampPost({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      } else if(type === "reply") {
+        //ToDO:
+        dispatch(APIService.addStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      }
+      // dispatch(actions.AddStamp({
+      //   type: type,
+      //   userId: userId,
+      //   postId: post.id,
+      //   stamp: {
+      //     name: stampName,
+      //     isIncluded: true,
+      //     count: 1,
+      //   },
+      // }));
     } else if (isIncluded) {
-      dispatch(actions.RemoveStamp({
-        type: type,
-        userId: userId,
-        postId: post.id,
-        stamp: {
-          name: stampName,
-          isIncluded: false,
-          count: 0,
-        },
-      }));
+      if(type === "post") {
+        dispatch(APIService.removeStampPost({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      } else if(type === "reply") {
+        //ToDO:
+        dispatch(APIService.removeStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
+      }
+      // dispatch(actions.RemoveStamp({
+      //   type: type,
+      //   userId: userId,
+      //   postId: post.id,
+      //   stamp: {
+      //     name: stampName,
+      //     isIncluded: false,
+      //     count: 0,
+      //   },
+      // }));
     }
 
     dispatch(actions.ShowModal({

@@ -12,6 +12,5 @@ export type BoardElement = {
         users: number[], 
         count: number
     }[];
-    num_replies: number;
-
+    num_reply: number;
 };
