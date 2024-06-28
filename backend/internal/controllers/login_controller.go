@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"log"
 	"myapp/internal/controllers/request"
 	"myapp/internal/controllers/response"
 	"myapp/internal/repositories"
@@ -37,7 +36,6 @@ func Login(ctx *gin.Context) {
 	userId := result.Id
 	sessionRepository := repositories.NewSessionRepository(Redis(ctx))
 	if err := sessionRepository.Set(ctx, sessionId.String(), userId); err != nil {
-		log.Println("小池")
 		handleError(ctx, 500, err)
 		return
 	}
