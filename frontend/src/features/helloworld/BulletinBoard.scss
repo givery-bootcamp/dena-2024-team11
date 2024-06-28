@@ -86,6 +86,16 @@ body {
     flex-grow: 0;
 }
 
+.login-icon-image {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    padding-top: 8px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
 .message-not-image-block {
     display: flex;
     flex-direction: column;

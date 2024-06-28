@@ -2,15 +2,17 @@ import { AppRoute } from "./AppRoute";
 import { useState } from "react";
 
 import "./App.scss";
-import { useAppDispatch } from "../shared/hooks";
+import { useAppDispatch, useAppSelector } from "../shared/hooks";
 import { APIService } from "../shared/services";
 
 function App() {
+  const user = useAppSelector(state => state.login.user)
+  console.log("user:", user)
   return (
     <div className="app-root">
       <header className="app-header">
         <div>Srack</div>
-        <SignInBlock/>
+        {user.id == -1 ? <SignInBlock/> : <LoginedUserBlock icon={user.icon}/>}
       </header>
       <main className="app-body">
         <AppRoute />
@@ -54,6 +56,14 @@ function SignInBlock() {
         <button className="signin-button" type="submit">Sign In</button>
       </form>
   );
+}
+
+function LoginedUserBlock({icon}: {icon: string}) {
+  return (
+    <div>
+      <img className="login-icon-image" src={icon}></img>
+    </div>
+  )
 }
 
 export default App;
