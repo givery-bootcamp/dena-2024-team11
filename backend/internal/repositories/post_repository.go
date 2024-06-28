@@ -18,9 +18,10 @@ func NewPostRepository(conn *gorm.DB) *PostRepository {
 	}
 }
 
+
 func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
 	var posts []*dao.Post
-	if err := r.Conn.Preload("Replies").Preload("User").Find(&posts).Error; err != nil {
+	if err := r.Conn.Preload("User").Preload("Replies.User").Preload("Stamps.User").Find(&posts).Error; err != nil {
 		return nil, err
 	}
    
@@ -31,6 +32,7 @@ func (r *PostRepository) GetAllPosts() ([]*entities.Post, error) {
     
 	return result, nil
 }
+
 
 func (r *PostRepository) CreatePost(userId int, content string) (*entities.Post, error) {
 	post := dao.Post{
