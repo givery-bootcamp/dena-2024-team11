@@ -32,6 +32,7 @@ export function BulletinBoard() {
   const showModal = useAppSelector((state) => state.modal.showModal);
   const modalInfo = useAppSelector((state) => state.modal.modalInfo);
   const dispatch = useAppDispatch();
+
   const stamps = [
     "saikou", 
     "akebono", 
@@ -206,9 +207,10 @@ export function PostItem({ post, isThread }: PostItemProps) {
   //     count: 2,
   //   }
   // ]
+  const userId = useAppSelector(state => state.login.user.id);
 
   const reactionButtons = stamps?.map((stamp, index) => {
-    const stampIsIncluded = stamp.users.find(userId => userId === 1) !== undefined;
+    const stampIsIncluded = stamp.users.find(stampUserId => stampUserId === userId) !== undefined;
     return (
       <li key={index.toString()}>
         <ReactionButton stampName={stamp.name} isIncluded={stampIsIncluded} count={stamp.count} post={post}/>
@@ -271,7 +273,11 @@ export function ReactionButton ({stampName, isIncluded, count, post} : {stampNam
           stampName: stampName,
         }));
       } else if(type === "reply") {
-        //ToDo: reply
+        dispatch(APIService.removeStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
       }
       // dispatch(actions.RemoveStamp({
       //   type: type,
@@ -292,6 +298,11 @@ export function ReactionButton ({stampName, isIncluded, count, post} : {stampNam
         }));
       } else if(type === "reply"){
         //ToDo:
+        dispatch(APIService.addStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
       }
       // dispatch(
       //   actions.AddStamp({
@@ -426,6 +437,11 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
         }));
       } else if(type === "reply") {
         //ToDO:
+        dispatch(APIService.addStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
       }
 
       // dispatch(actions.AddStamp({
@@ -447,6 +463,11 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
         }));
       } else if(type === "reply") {
         //ToDO:
+        dispatch(APIService.addStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
       }
       // dispatch(actions.AddStamp({
       //   type: type,
@@ -467,6 +488,11 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
         }));
       } else if(type === "reply") {
         //ToDO:
+        dispatch(APIService.removeStampReply({
+          postId: post.id,
+          userId: userId,
+          stampName: stampName,
+        }));
       }
       // dispatch(actions.RemoveStamp({
       //   type: type,

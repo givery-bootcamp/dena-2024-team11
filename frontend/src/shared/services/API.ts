@@ -285,10 +285,10 @@ export const addStampPost = createAsyncThunk<StampActionPayload, {postId: number
     console.log("post error");
   }
 
-  const getResponseObj = await postResponse.json();
+  // const getResponseObj = await postResponse.json();
   const payload = {
     type: "post",
-    userId: getResponseObj.user.id,
+    userId: userId,
     postId: postId,
     stamp: {
       name: stampName,
@@ -319,7 +319,7 @@ export const removeStampPost = createAsyncThunk<StampActionPayload, {postId: num
   const getResponseObj = await postResponse.json();
   const payload = {
     type: "post",
-    userId: getResponseObj.user.id,
+    userId: userId,
     postId: postId,
     stamp: {
       name: stampName,
@@ -337,7 +337,7 @@ export const addStampReply = createAsyncThunk<StampActionPayload, {postId: numbe
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      post_id: postId,
+      reply_id: postId,
       user_id: userId,
       stamp_name: stampName,
     }),
@@ -348,10 +348,10 @@ export const addStampReply = createAsyncThunk<StampActionPayload, {postId: numbe
     console.log("post error");
   }
 
-  const getResponseObj = await postResponse.json();
+  // const getResponseObj = await postResponse.json();
   const payload = {
     type: "reply",
-    userId: getResponseObj.user.id,
+    userId: userId,
     postId: postId,
     stamp: {
       name: stampName,
@@ -368,7 +368,7 @@ export const removeStampReply = createAsyncThunk<StampActionPayload, {postId: nu
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      post_id: postId,
+      reply_id: postId,
       user_id: userId,
       stamp_name: stampName,
     }),
@@ -379,10 +379,10 @@ export const removeStampReply = createAsyncThunk<StampActionPayload, {postId: nu
     console.log("post error");
   }
 
-  const getResponseObj = await postResponse.json();
+  // const getResponseObj = await postResponse.json();
   const payload = {
     type: "reply",
-    userId: getResponseObj.user.id,
+    userId: userId,
     postId: postId,
     stamp: {
       name: stampName,
