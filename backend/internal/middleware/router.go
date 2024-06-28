@@ -24,6 +24,7 @@ func SetupRoutes(app *gin.Engine) {
 	app.POST("/replies", sessionCheck(), controllers.PostReply)
 
 	app.POST("/stamp/add/post", sessionCheck(), controllers.AddPostStamp)
+	app.POST("/stamp/add/reply", sessionCheck(), controllers.AddReplyStamp)
 
 	app.POST("/login", controllers.Login)
 }

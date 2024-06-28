@@ -22,7 +22,8 @@ func GetRepliesByPostId(ctx *gin.Context) {
 	} else if replies != nil {
 		res := response.GetRepliesByPostIdResponse{}
 		for _, reply := range replies {
-			res = append(res, response.NewReplyResponse(reply))
+			stamps := EntityStampsToResponse(reply.Stamps)
+			res = append(res, response.NewReplyResponse(reply, stamps))
 		}
 		ctx.JSON(200, res)
 	} else {
@@ -42,5 +43,6 @@ func PostReply(ctx *gin.Context) {
 		handleError(ctx, 500, errors.New("create reply record failed"))
 		return
 	}
-	ctx.JSON(201, response.NewReplyResponse(reply))
+	stamps := EntityStampsToResponse(reply.Stamps)
+	ctx.JSON(201, response.NewReplyResponse(reply, stamps))
 }
