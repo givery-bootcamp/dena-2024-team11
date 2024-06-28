@@ -4,6 +4,7 @@ import (
 	"errors"
 	"myapp/internal/controllers/request"
 	"myapp/internal/controllers/response"
+	"myapp/internal/entities"
 	"myapp/internal/repositories"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,8 @@ func GetPosts(ctx *gin.Context) {
 
 		res := response.GetPostsResponse{}
 		for _, post := range posts {
-			res = append(res, response.NewPostResponse(post, len(post.Replies)))
+			stamps := EntityStampsToResponse(post.Stamps)
+			res = append(res, response.NewPostResponse(post, len(post.Replies), stamps))
 		}
 		ctx.JSON(200, res)
 	} else {
@@ -38,5 +40,32 @@ func PostPosts(ctx *gin.Context) {
 		handleError(ctx, 500, errors.New("create post record failed"))
 		return
 	}
-	ctx.JSON(201, response.NewPostResponse(post, len(post.Replies)))
+
+	stamps := EntityStampsToResponse(post.Stamps)
+	ctx.JSON(201, response.NewPostResponse(post, len(post.Replies), stamps))
+}
+
+func EntityStampsToResponse(entityStamps []*entities.Stamp) []response.Stamp {
+    stampMap := make(map[string]map[int]struct{})
+    for _, ps := range entityStamps {
+        key := ps.Name
+        if _, exists := stampMap[key]; !exists {
+            stampMap[key] = make(map[int]struct{})
+        }
+        stampMap[key][ps.User.Id] = struct{}{}
+    }
+
+    var respStamps []response.Stamp
+    for name, users := range stampMap {
+        userIds := make([]int, 0, len(users))
+        for userId := range users {
+            userIds = append(userIds, userId)
+        }
+        respStamps = append(respStamps, response.Stamp{
+            Name:    name,
+            UserIds: userIds,
+            Count:   len(userIds),
+        })
+    }
+    return respStamps
 }

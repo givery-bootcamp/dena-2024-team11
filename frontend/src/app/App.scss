@@ -1,4 +1,7 @@
-@import "../node_modules/bootstrap/scss/bootstrap";
+// @import "../node_modules/bootstrap/scss/bootstrap";
+body {
+  margin: 0;
+}
 
 .app-root {
   height: 100vh;
@@ -13,7 +16,7 @@
   justify-content: space-between;
   align-items: center;
   background: #480c44;
-  color: $white;
+  color: white;
   // height: 4rem;
   padding: 0 1rem;
   font-weight: 700;
@@ -24,7 +27,7 @@
   // display: flex;
   flex: 1;
   height: 500px;
-  background: $white;
+  background: white;
 }
 
 .signin-button {

@@ -14,7 +14,7 @@ func (u *User) CreateWith(user entities.User) {
 	u.Icon = user.Icon
 }
 
-func NewUserReseponse(user *entities.User) *User {
+func NewUserResponse(user *entities.User) *User {
 	return &User{
 		Id:   user.Id,
 		Name: user.Name,

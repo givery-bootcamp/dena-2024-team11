@@ -61,7 +61,11 @@ export function BulletinBoard() {
     "kodomogatabeteru",
     "totyuudesyouga",
     "obondegohan",
-    "zaurusu"
+    "zaurusu",
+    "bad",
+    "good",
+    "notgood",
+    "soso",
   ];
   useEffect(() => {
     dispatch(APIService.getBoard());
@@ -175,10 +179,11 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
-  const stamps = post.parentId === -1 ? 
-    postStamps.find(postStamp => postStamp.postId === post.id)?.stamps :
-    replyStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
+  const stamps = post.stamps;
+  // const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  // const stamps = post.parentId === -1 ? 
+  //   postStamps.find(postStamp => postStamp.postId === post.id)?.stamps :
+  //   replyStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
   // if(stamps === undefined) return;
   // const stamps = [
   //   {
@@ -199,20 +204,21 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // ]
 
   const reactionButtons = stamps?.map((stamp, index) => {
+    const stampIsIncluded = stamp.users.find(userId => userId === 1) !== undefined;
     return (
       <li key={index.toString()}>
-        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} post={post}/>
+        <ReactionButton str={stamp.name} isIncluded={stampIsIncluded} count={stamp.count} post={post}/>
       </li>
     )
   });
-
+  console.log(post);
   return (
         <div className="message-block">
           <img className="message-author-image" src="/images/tanigawa.png"></img>
           <div className="message-not-image-block">
             <div className="message-author-name">
               {post.id} -&gt; {post.parentId}: 
-              {post.name}
+              {post.user.name}
             </div>
             <div className="message-message">
               <MessageItem str={post.message}/>
@@ -252,10 +258,12 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
   // const [stampCount, setStampCount] = useState(count);
   const dispatch = useAppDispatch();
   const type = post.parentId === -1 ? "post" : "reply";
+  const userId = 1;
   function onClick() {
     if (isIncluded) {
       dispatch(actions.RemoveStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: str,
@@ -266,6 +274,7 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
     } else {
       dispatch(actions.AddStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: str,
@@ -375,17 +384,21 @@ export function AddStampModal({stamps, modalInfo}: {stamps: string[], modalInfo:
 export function StampItem({stampName, post}: {stampName: string, post: BoardElement}) {
   const dispatch = useAppDispatch();
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
-  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  // const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
   const type = post.parentId === -1 ? "post" : "reply";
+  const userId = 1;
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
-    const stamps = type === "post" ? postStamps : replyStamps;
-    const postStamp = stamps.find(postStamp => postStamp.postId === post.id);
-    const stamp = postStamp?.stamps.find(stamp => stamp.name === stampName);
-    if (postStamp === undefined) {
+    //const stamps = type === "post" ? postStamps : replyStamps;
+    const stamps = post.stamps;
+    // const postStamp = stamps.find(postStamp => postStamp.postId === post.id);
+    const stamp = stamps.find(stamp => stamp.name === stampName);
+    const isIncluded = stamp?.users.find(user => user === userId) !== undefined;
+    if (stamp === undefined) {
       dispatch(actions.AddStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: stampName,
@@ -393,9 +406,10 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
           count: 1,
         },
       }));
-    } else if (stamp === undefined) {
+    } else if (!isIncluded) {
       dispatch(actions.AddStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: stampName,
@@ -403,19 +417,10 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
           count: 1,
         },
       }));
-    } else if (!stamp.isIncluded) {
-      dispatch(actions.AddStamp({
-        type: type,
-        postId: post.id,
-        stamp: {
-          name: stampName,
-          isIncluded: true,
-          count: 1,
-        },
-      }));
-    } else if (stamp.isIncluded) {
+    } else if (isIncluded) {
       dispatch(actions.RemoveStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: stampName,

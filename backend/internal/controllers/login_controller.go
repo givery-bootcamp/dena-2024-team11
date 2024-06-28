@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"errors"
+	"log"
 	"myapp/internal/controllers/request"
+	"myapp/internal/controllers/response"
 	"myapp/internal/repositories"
 	"net/http"
 
@@ -17,8 +19,10 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
+	log.Println("req:", req)
+
 	loginRepository := repositories.NewLoginRepository(DB(ctx))
-	result, err := loginRepository.Login(req.UserId)
+	result, err := loginRepository.Login(req.Email)
 	if err != nil {
 		handleError(ctx, 404, err)
 	}
@@ -38,16 +42,23 @@ func Login(ctx *gin.Context) {
 		handleError(ctx, 500, err)
 		return
 	}
-
+	userRepository := repositories.NewUserRepository(DB(ctx))
+	user, err := userRepository.FindByIdUser(userId)
+	if err != nil {
+		handleError(ctx, 500, err)
+		return
+	}
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionId.String(),
 		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 		Path:     "/",
 		MaxAge:   3600,
 	}
+	res := response.NewUserResponse(user)
 	ctx.SetSameSite(http.SameSiteNoneMode)
 	http.SetCookie(ctx.Writer, cookie)
-	ctx.JSON(200, gin.H{})
+	ctx.JSON(200, res)
 }
