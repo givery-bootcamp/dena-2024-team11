@@ -9,7 +9,7 @@ function App() {
   return (
     <div className="app-root">
       <header className="app-header">
-        Srack
+        <div>Srack</div>
         <SignInBlock/>
       </header>
       <main className="app-body">
@@ -32,21 +32,27 @@ function SignInBlock() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input 
-        type="text" 
-        value={userId} 
-        placeholder="User ID" 
-        onChange={(e) => setUserId(e.target.value)}
-      />
-      <input 
-        type="text" 
-        value={password} 
-        placeholder="Password" 
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Sign In</button>
-    </form>
+      <form onSubmit={handleSubmit} className="login-form">
+        <div className="login-input-form">
+          <div className="login-input-container">
+            <input className="login-input"
+              type="text" 
+              value={userId} 
+              placeholder="User ID" 
+              onChange={(e) => setUserId(e.target.value)}
+            />
+          </div>
+          <div className="login-input-container">
+            <input className="login-input"
+              type="text" 
+              value={password} 
+              placeholder="Password" 
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
+        <button className="signin-button" type="submit">Sign In</button>
+      </form>
   );
 }
 
