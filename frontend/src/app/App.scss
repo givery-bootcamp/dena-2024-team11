@@ -14,12 +14,66 @@
   align-items: center;
   background: #480c44;
   color: $white;
-  height: 3rem;
+  // height: 4rem;
   padding: 0 1rem;
+  font-weight: 700;
+  font-size: 18px;
 }
 
 .app-body {
   // display: flex;
-  flex-grow: 1;
+  flex: 1;
+  height: 500px;
   background: $white;
+}
+
+.signin-button {
+  background-color: #208460; /* Green */
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5%;
+  // margin: 20px 2px;
+}
+
+.signin-button:hover {
+  background-color: #2C9D74; /* Green */
+  color: white;
+}
+
+.login-form {
+  // border: 0.1px solid #c2c2c2;
+  // background-color: white;
+  display: flex;
+  padding: 10px;
+}
+
+.login-input-form {
+  display: flex;
+  // flex-direction: column;
+  // padding-right: 100px;
+  margin-right: 5px;
+}
+
+.login-input {
+  border-radius: 5px;
+  border: none;
+  font-size: 15px;
+}
+
+.login-input:focus {
+  outline: none;
+}
+
+.login-input-container {
+  padding: 3px 8px;
+  background-color: white;
+  border-radius: 3px;
+  margin-right: 5px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
