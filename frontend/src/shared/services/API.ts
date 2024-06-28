@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BoardElement, Hello } from '../models';
+import { LoginState } from '../models';
 
 type DbPost = {
   id: number;
@@ -106,7 +107,7 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
           icon: dbReply.user.icon,
         },
         message: dbReply.content,
-        parentId: -1,
+        parentId: parentId,
         stamps: dbReply.stamps,
         num_replies: dbReply.num_replies,
       };
@@ -116,14 +117,14 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
   }
 );
 
-export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',async (message) => {
+export const postBoard = createAsyncThunk<BoardElement[], {message: string; userId: number}>('postBoard',async ({message, userId}) => {
     const postResponse = await fetch(`${API_ENDPOINT_PATH}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
-        user_id: 1,
+        user_id: userId,
         content: message,
        }),
       mode: "cors",
@@ -167,7 +168,7 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
   }
 );
 
-export const postReply = createAsyncThunk<BoardElement[], {message: string; parentId: number}>('postReply', async ({message, parentId}) => {
+export const postReply = createAsyncThunk<BoardElement[], {message: string; parentId: number, userId: number}>('postReply', async ({message, parentId, userId}) => {
   const postResponse = await fetch(`${API_ENDPOINT_PATH}/replies`, {
     method: 'POST',
     headers: {
@@ -175,7 +176,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
     },
     body: JSON.stringify({ 
       post_id: parentId,
-      user_id: 1,
+      user_id: userId,
       content: message,
     }),
     mode: "cors",
@@ -217,7 +218,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
   return boardElementData;
 });
 
-export const loginBoard = createAsyncThunk<boolean, {userId: string; password: string}>('loginBoard', async ({userId, password})=> {
+export const loginBoard = createAsyncThunk<LoginState, {userId: string; password: string}>('loginBoard', async ({userId, password})=> {
   const postResponse = await fetch(`${API_ENDPOINT_PATH}/login`, {
     method: 'POST',
     headers: {
@@ -232,7 +233,25 @@ export const loginBoard = createAsyncThunk<boolean, {userId: string; password: s
   });
   if(!postResponse.ok) {
     console.log("post error");
-    return false;
+    return {
+      isLogin: false,
+      user: {
+        id: -1,
+        name: "",
+        icon: "",
+      }
+    };
   }
-  return true;
+
+  const loginResponse = await postResponse.json();
+  console.log(loginResponse);
+
+  return {
+    isLogin: true,
+    user: {
+      id: loginResponse.id,
+      name: loginResponse.name,
+      icon: loginResponse.icon,
+    }
+  };
 });
