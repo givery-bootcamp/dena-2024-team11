@@ -61,7 +61,11 @@ export function BulletinBoard() {
     "kodomogatabeteru",
     "totyuudesyouga",
     "obondegohan",
-    "zaurusu"
+    "zaurusu",
+    "bad",
+    "good",
+    "notgood",
+    "soso",
   ];
   useEffect(() => {
     dispatch(APIService.getBoard());
@@ -175,10 +179,11 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // }
 
   //本来はpostからreactionを取得
-  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
-  const stamps = post.parentId === -1 ? 
-    postStamps.find(postStamp => postStamp.postId === post.id)?.stamps :
-    replyStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
+  const stamps = post.stamps;
+  // const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  // const stamps = post.parentId === -1 ? 
+  //   postStamps.find(postStamp => postStamp.postId === post.id)?.stamps :
+  //   replyStamps.find(postStamp => postStamp.postId === post.id)?.stamps;
   // if(stamps === undefined) return;
   // const stamps = [
   //   {
@@ -199,20 +204,21 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // ]
 
   const reactionButtons = stamps?.map((stamp, index) => {
+    const stampIsIncluded = stamp.users.find(userId => userId === 2) !== undefined;
     return (
       <li key={index.toString()}>
-        <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} post={post}/>
+        <ReactionButton str={stamp.name} isIncluded={stampIsIncluded} count={stamp.count} post={post}/>
       </li>
     )
   });
-
+  console.log(post);
   return (
         <div className="message-block">
           <img className="message-author-image" src="/images/tanigawa.png"></img>
           <div className="message-not-image-block">
             <div className="message-author-name">
               {post.id} -&gt; {post.parentId}: 
-              {post.name}
+              {post.user.name}
             </div>
             <div className="message-message">
               <MessageItem str={post.message}/>
