@@ -217,7 +217,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
   });
   return (
         <div className="message-block">
-          <img className="message-author-image" src="/images/tanigawa.png"></img>
+          <img className="message-author-image" src={post.user.icon || "/images/tanigawa.png"}></img>
           <div className="message-not-image-block">
             <div className="message-author-name">
               {post.id} -&gt; {post.parentId}: 
@@ -238,12 +238,10 @@ export function PostItem({ post, isThread }: PostItemProps) {
               {/* <ReactionButton str="emoji"/> */}
             </div>
             {isThread || post.parentId === -1 && <div className="message-reply-block">
-              <img className="message-reply-image1" src="/images/chono.png"></img>
-              <img className="message-reply-image2" src="/images/tanigawa.png"></img>
               <button className="message-reply-button" onClick={() => {
                 dispatch(actions.SelectThread(post.id));
                 dispatch(APIService.getReplies(post.id));
-              }}>返信する</button>
+              }}>{!post.num_reply ? "返信する" : post.num_reply + "件の返信"}</button>
             </div>}
           </div>
 

@@ -17,7 +17,7 @@ type DbPost = {
     users: number[];
     count: number;
   }[],
-  num_replies: number;
+  num_reply: number;
 };
 
 type DbReply = {
@@ -35,7 +35,7 @@ type DbReply = {
     users: number[];
     count: number;
   }[],
-  num_replies: number;
+  num_reply: number;
 }
 
 // console.log(import.meta.env.VITE_NODE_ENV);
@@ -76,7 +76,7 @@ export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () =>
         message: dbPost.content,
         parentId: -1,
         stamps: dbPost.stamps,
-        num_replies: dbPost.num_replies,
+        num_reply: dbPost.num_reply,
       }
       return newElement;
     });
@@ -109,7 +109,7 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
         message: dbReply.content,
         parentId: parentId,
         stamps: dbReply.stamps,
-        num_replies: dbReply.num_replies,
+        num_reply: dbReply.num_reply,
       };
       return newReply;
     })
@@ -160,7 +160,7 @@ export const postBoard = createAsyncThunk<BoardElement[], {message: string; user
         message: dbPost.content,
         parentId: -1,
         stamps: dbPost.stamps,
-        num_replies: dbPost.num_replies,
+        num_reply: dbPost.num_reply,
       }
       return newElement;
     })
@@ -211,7 +211,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
         message: dbReply.content,
         parentId: parentId,
         stamps: dbReply.stamps,
-        num_replies: dbReply.num_replies,
+        num_reply: dbReply.num_reply,
     };
     return newReply;
   })
