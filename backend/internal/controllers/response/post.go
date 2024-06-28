@@ -18,7 +18,7 @@ func NewPostResponse(post *entities.Post, numReply int) *Post {
 	return &Post{
 		Id: post.Id,
 		Content: post.Content,
-		User: NewUserReseponse(post.User),
+		User: NewUserResponse(post.User),
 		CreatedAt: post.CreatedAt,
 		UpdatedAt: post.UpdatedAt,
 		NumReply: numReply,
