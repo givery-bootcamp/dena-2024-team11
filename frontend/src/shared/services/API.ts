@@ -182,7 +182,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
   return boardElementData;
 });
 
-export const loginBoard = createAsyncThunk<boolean, {userId: number; password: string}>('loginBoard', async ({userId, password})=> {
+export const loginBoard = createAsyncThunk<boolean, {userId: string; password: string}>('loginBoard', async ({userId, password})=> {
   const postResponse = await fetch(`${API_ENDPOINT_PATH}/login`, {
     method: 'POST',
     headers: {

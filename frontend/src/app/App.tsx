@@ -26,7 +26,7 @@ function SignInBlock() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    dispatch(APIService.loginBoard({userId: Number(userId), password: password}));
+    dispatch(APIService.loginBoard({userId: userId, password: password}));
     setUserId("");
     setPassword("");
   }

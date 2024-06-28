@@ -16,10 +16,10 @@ func NewLoginRepository(conn *gorm.DB) *LoginRepository {
 	}
 }
 
-func (r *LoginRepository) Login(id int) (*entities.Login, error) {
+func (r *LoginRepository) Login(email string) (*entities.Login, error) {
 	var login entities.Login
-	if err := r.Conn.Table("users").Where("id = ?", id).First(&login).Error; err != nil {
+	if err := r.Conn.Table("users").Where("email = ?", email).First(&login).Error; err != nil {
 		return nil, err
 	}
-	return &login, nil	
+	return &login, nil
 }
