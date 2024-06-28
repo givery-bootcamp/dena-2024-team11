@@ -1,6 +1,8 @@
 package dao
 
-import "myapp/internal/entities"
+import (
+	"myapp/internal/entities"
+)
 
 type User struct {
 	Id      int 

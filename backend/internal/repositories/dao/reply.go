@@ -13,8 +13,8 @@ type Reply struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	User User `gorm:"foreignKey:user_id"`
-	Post Post `gorm:"foreignKey:post_id"`
+	User User `gorm:"foreignKey:UserId"`
+	Post Post `gorm:"foreignKey:PostId"`
 }
 
 func (r *Reply) ToEntity() *entities.Reply {
