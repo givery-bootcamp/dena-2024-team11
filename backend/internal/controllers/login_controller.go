@@ -56,10 +56,8 @@ func Login(ctx *gin.Context) {
 		Path:     "/",
 		MaxAge:   3600,
 	}
-	response.NewUserResponse(user)
+	res :=response.NewUserResponse(user)
 	ctx.SetSameSite(http.SameSiteNoneMode)
 	http.SetCookie(ctx.Writer, cookie)
-	ctx.JSON(200, gin.H{
-		
-	})
+	ctx.JSON(200, res)
 }
