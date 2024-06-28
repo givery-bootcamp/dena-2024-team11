@@ -209,7 +209,7 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
           icon: dbReply.user.icon,
         },
         message: dbReply.content,
-        parentId: -1,
+        parentId: parentId,
         stamps: dbReply.stamps,
         num_replies: dbReply.num_replies,
     };
