@@ -23,6 +23,23 @@ func AddPostStamp(ctx *gin.Context) {
 		return
 	}
 
-	stamps := convertPostStampsToStamps(postStamped.Stamps)
+	stamps := EntityStampsToResponse(postStamped.Stamps)
 	ctx.JSON(201, response.NewPostResponse(postStamped, len(postStamped.Replies), stamps))
+}
+
+func AddReplyStamp(ctx *gin.Context) {
+	req := request.AddReplyStampRequest{}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		handleError(ctx, 400, errors.New("add reply stamp request body is invalid"))
+		return
+	}
+	repository := repositories.NewStampRepository(DB(ctx))
+	replyStamped, err := repository.CreateReplyStamp(req.ReplyId, req.UserId, req.Name)
+	if err != nil || replyStamped == nil {
+		handleError(ctx, 500, errors.New("create replyStamp record failed"))
+		return
+	}
+
+	stamps := EntityStampsToResponse(replyStamped.Stamps)
+	ctx.JSON(201, response.NewReplyResponse(replyStamped, stamps))
 }

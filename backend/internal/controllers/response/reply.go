@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+
 type Reply struct {
 	Id        int       `json:"id"`
 	Content   string    `json:"content"`
@@ -12,9 +13,10 @@ type Reply struct {
 	PostId    int       `json:"post_id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	Stamps []Stamp		`json:"stamps"`
 }
 
-func NewReplyResponse(reply *entities.Reply) *Reply{
+func NewReplyResponse(reply *entities.Reply, stamps []Stamp) *Reply{
 	return &Reply{
 		Id: reply.Id,
 		Content: reply.Content,
@@ -22,6 +24,7 @@ func NewReplyResponse(reply *entities.Reply) *Reply{
 		UpdatedAt: reply.UpdatedAt,
 		PostId: reply.PostId,
 		User: NewUserResponse(reply.User),
+		Stamps: stamps,
 	}
 }
 

@@ -19,7 +19,7 @@ func NewReplyRepository(conn *gorm.DB) *ReplyRepository {
 
 func (r *ReplyRepository) GetRepliesByPostId(postId int) ([]*entities.Reply, error) {
 	var replies []*dao.Reply
-	if err := r.Conn.Debug().Preload("User").Where("post_id = ?", postId).Find(&replies).Error; err != nil {
+	if err := r.Conn.Debug().Preload("User").Preload("Stamps.User").Where("post_id = ?", postId).Find(&replies).Error; err != nil {
 		return nil, err
 	}
 	var result []*entities.Reply
