@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"errors"
+	"log"
 	"myapp/internal/controllers/request"
+	"myapp/internal/controllers/response"
 	"myapp/internal/repositories"
 	"net/http"
 
@@ -35,10 +37,16 @@ func Login(ctx *gin.Context) {
 	userId := result.Id
 	sessionRepository := repositories.NewSessionRepository(Redis(ctx))
 	if err := sessionRepository.Set(ctx, sessionId.String(), userId); err != nil {
+		log.Println("小池")
 		handleError(ctx, 500, err)
 		return
 	}
-
+	userRepository := repositories.NewUserRepository(DB(ctx))
+	user ,err := userRepository.FindByIdUser(userId)
+	if err != nil {
+		handleError(ctx, 500, err)
+		return
+	}
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionId.String(),
@@ -48,7 +56,10 @@ func Login(ctx *gin.Context) {
 		Path:     "/",
 		MaxAge:   3600,
 	}
+	response.NewUserResponse(user)
 	ctx.SetSameSite(http.SameSiteNoneMode)
 	http.SetCookie(ctx.Writer, cookie)
-	ctx.JSON(200, gin.H{})
+	ctx.JSON(200, gin.H{
+		
+	})
 }
