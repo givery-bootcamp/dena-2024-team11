@@ -58,3 +58,38 @@ func (r *StampRepository) CreateReplyStamp(replyId int, userId int, name string)
 	}
 	return stampedReply.ToEntity(), nil
 }
+
+
+func (r *StampRepository) RemovePostStamp(postId int, userId int, name string) (*entities.Post, error) {
+	postStamp := dao.PostStamp{
+		PostId:  postId,
+		UserId:  userId,
+		Name:    name,
+	}
+    if err := r.Conn.Where("name = ? AND user_id = ? AND post_id = ?", name, userId, postId).Delete(&postStamp).Error; err != nil {
+        return nil, err
+    }
+
+	var stampedPost dao.Post
+	if err := r.Conn.Where("id = ?", postId).Preload("User").Preload("Replies").Preload("Stamps.User").First(&stampedPost).Error; err != nil {
+		return nil, err
+	}
+	return stampedPost.ToEntity(), nil
+}
+
+func (r *StampRepository) RemoveReplyStamp(replyId int, userId int, name string) (*entities.Reply, error) {
+	replyStamp := dao.ReplyStamp{
+		ReplyId: replyId,
+		UserId:  userId,
+		Name:    name,
+	}
+    if err := r.Conn.Where("name = ? AND user_id = ? AND reply_id = ?", name, userId, replyId).Delete(&replyStamp).Error; err != nil {
+        return nil, err
+    }
+
+	var stampedReply dao.Reply
+	if err := r.Conn.Where("id = ?", replyId).Preload("User").Preload("Stamps.User").First(&stampedReply).Error; err != nil {
+		return nil, err
+	}
+	return stampedReply.ToEntity(), nil
+}

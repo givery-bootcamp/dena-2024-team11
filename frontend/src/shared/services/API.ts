@@ -38,6 +38,16 @@ type DbReply = {
   num_replies: number;
 }
 
+type StampActionPayload = {
+  type: string,
+  userId: number,
+  postId: number,
+  stamp: {
+    name: string,
+    count: number,
+  },
+}
+
 // console.log(import.meta.env.VITE_NODE_ENV);
 // const API_ENDPOINT_PATH = import.meta.env.VITE_NODE_ENV === 'development' ? import.meta.env.VITE_API_ENDPOINT_DEV_PATH : import.meta.env.VITE_API_ENDPOINT_PROD_PATH;
 
@@ -254,4 +264,130 @@ export const loginBoard = createAsyncThunk<LoginState, {userId: string; password
       icon: loginResponse.icon,
     }
   };
+});
+
+export const addStampPost = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('addStampPost', async ({postId, userId, stampName})=> {
+  console.log("stampname " + stampName);
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/add/post`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      post_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "post",
+    userId: getResponseObj.user.id,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
+});
+
+export const removeStampPost = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('removeStampPost', async ({postId, userId, stampName})=> {
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/remove/post`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      post_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "post",
+    userId: getResponseObj.user.id,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
+});
+
+export const addStampReply = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('addStampPost', async ({postId, userId, stampName})=> {
+  console.log("stampname " + stampName);
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/add/reply`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      post_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "reply",
+    userId: getResponseObj.user.id,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
+});
+
+export const removeStampReply = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('removeStampPost', async ({postId, userId, stampName})=> {
+  const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/remove/reply`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      post_id: postId,
+      user_id: userId,
+      stamp_name: stampName,
+    }),
+    mode: "cors",
+    credentials: "include",
+  });
+  if(!postResponse.ok) {
+    console.log("post error");
+  }
+
+  const getResponseObj = await postResponse.json();
+  const payload = {
+    type: "reply",
+    userId: getResponseObj.user.id,
+    postId: postId,
+    stamp: {
+      name: stampName,
+      count: 1,
+    },
+  }
+  return payload;
 });
