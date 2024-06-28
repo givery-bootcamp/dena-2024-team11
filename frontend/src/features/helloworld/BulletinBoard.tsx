@@ -204,7 +204,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
   // ]
 
   const reactionButtons = stamps?.map((stamp, index) => {
-    const stampIsIncluded = stamp.users.find(userId => userId === 2) !== undefined;
+    const stampIsIncluded = stamp.users.find(userId => userId === 1) !== undefined;
     return (
       <li key={index.toString()}>
         <ReactionButton str={stamp.name} isIncluded={stampIsIncluded} count={stamp.count} post={post}/>
@@ -272,6 +272,7 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
     } else {
       dispatch(actions.AddStamp({
         type: type,
+        userId: 1,
         postId: post.id,
         stamp: {
           name: str,
@@ -383,6 +384,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
   const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
   const type = post.parentId === -1 ? "post" : "reply";
+  const userId = 1;
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
@@ -392,6 +394,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
     if (postStamp === undefined) {
       dispatch(actions.AddStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: stampName,
@@ -402,6 +405,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
     } else if (stamp === undefined) {
       dispatch(actions.AddStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: stampName,
@@ -412,6 +416,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
     } else if (!stamp.isIncluded) {
       dispatch(actions.AddStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: stampName,
@@ -422,6 +427,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
     } else if (stamp.isIncluded) {
       dispatch(actions.RemoveStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: stampName,
