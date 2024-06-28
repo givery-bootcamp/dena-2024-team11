@@ -44,6 +44,7 @@ func Login(ctx *gin.Context) {
 		Value:    sessionId.String(),
 		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 		Path:     "/",
 		MaxAge:   3600,
 	}
