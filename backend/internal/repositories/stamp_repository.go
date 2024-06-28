@@ -27,7 +27,7 @@ func (r *StampRepository) CreatePostStamp(postId int, userId int, name string) (
 		return nil, err
 	}
 	var stampedPost dao.Post
-	if err := r.Conn.Preload("User").Preload("Replies.User").Preload("Stamps.User").Where("post_id = ?", postId).First(&stampedPost).Error; err != nil {
+	if err := r.Conn.Preload("User").Preload("Replies.User").Preload("Stamps.User").Where("id = ?", postId).First(&stampedPost).Error; err != nil {
 		return nil, err
 	}
 	return stampedPost.ToEntity(), nil
