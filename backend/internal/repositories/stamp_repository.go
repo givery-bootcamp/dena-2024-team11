@@ -58,3 +58,32 @@ func (r *StampRepository) CreateReplyStamp(replyId int, userId int, name string)
 	}
 	return stampedReply.ToEntity(), nil
 }
+
+func (r *StampRepository) removeStamp(stamp interface{}, preloadAssociations []string, idField string, id int, result interface{}) error {
+	if err := r.Conn.Delete(stamp).Error; err != nil {
+		return err
+	}
+	query := r.Conn
+	for _, association := range preloadAssociations {
+		query = query.Preload(association)
+	}
+	if err := query.Where(idField+" = ?", id).First(result).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+
+func (r *StampRepository) RemovePostStamp(postId int, userId int, name string) (*entities.Post, error) {
+	postStamp := dao.PostStamp{
+		PostId:  postId,
+		UserId:  userId,
+		Name:    name,
+	}
+	var stampedPost dao.Post
+	err := r.removeStamp(&postStamp, []string{"User", "Replies", "Stamps.User"}, "id", postId, &stampedPost)
+	if err != nil {
+		return nil, err
+	}
+	return stampedPost.ToEntity(), nil
+}
