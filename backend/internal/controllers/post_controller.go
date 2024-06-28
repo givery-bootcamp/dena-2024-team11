@@ -54,8 +54,9 @@ func EntityStampsToResponse(entityStamps []*entities.Stamp) []response.Stamp {
         }
         stampMap[key][ps.User.Id] = struct{}{}
     }
+	
+	respStamps := make([]response.Stamp, 0)
 
-    var respStamps []response.Stamp
     for name, users := range stampMap {
         userIds := make([]int, 0, len(users))
         for userId := range users {
