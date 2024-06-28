@@ -21,7 +21,7 @@ func NewReplyResponse(reply *entities.Reply) *Reply{
 		CreatedAt: reply.CreatedAt,
 		UpdatedAt: reply.UpdatedAt,
 		PostId: reply.PostId,
-		User: NewUserReseponse(reply.User),
+		User: NewUserResponse(reply.User),
 	}
 }
 
