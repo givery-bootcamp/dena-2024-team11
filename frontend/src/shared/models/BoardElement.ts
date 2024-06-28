@@ -13,5 +13,4 @@ export type BoardElement = {
         count: number
     }[];
     num_replies: number;
-
 };
