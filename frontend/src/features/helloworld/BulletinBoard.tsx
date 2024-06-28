@@ -211,7 +211,6 @@ export function PostItem({ post, isThread }: PostItemProps) {
       </li>
     )
   });
-  console.log(post);
   return (
         <div className="message-block">
           <img className="message-author-image" src="/images/tanigawa.png"></img>
