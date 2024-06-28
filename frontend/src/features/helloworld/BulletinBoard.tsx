@@ -258,10 +258,12 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
   // const [stampCount, setStampCount] = useState(count);
   const dispatch = useAppDispatch();
   const type = post.parentId === -1 ? "post" : "reply";
+  const userId = 1;
   function onClick() {
     if (isIncluded) {
       dispatch(actions.RemoveStamp({
         type: type,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: str,
@@ -272,7 +274,7 @@ export function ReactionButton ({str, isIncluded, count, post} : {str:string, is
     } else {
       dispatch(actions.AddStamp({
         type: type,
-        userId: 1,
+        userId: userId,
         postId: post.id,
         stamp: {
           name: str,
@@ -382,16 +384,18 @@ export function AddStampModal({stamps, modalInfo}: {stamps: string[], modalInfo:
 export function StampItem({stampName, post}: {stampName: string, post: BoardElement}) {
   const dispatch = useAppDispatch();
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
-  const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
+  // const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
   const type = post.parentId === -1 ? "post" : "reply";
   const userId = 1;
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる
-    const stamps = type === "post" ? postStamps : replyStamps;
-    const postStamp = stamps.find(postStamp => postStamp.postId === post.id);
-    const stamp = postStamp?.stamps.find(stamp => stamp.name === stampName);
-    if (postStamp === undefined) {
+    //const stamps = type === "post" ? postStamps : replyStamps;
+    const stamps = post.stamps;
+    // const postStamp = stamps.find(postStamp => postStamp.postId === post.id);
+    const stamp = stamps.find(stamp => stamp.name === stampName);
+    const isIncluded = stamp?.users.find(user => user === userId) !== undefined;
+    if (stamp === undefined) {
       dispatch(actions.AddStamp({
         type: type,
         userId: userId,
@@ -402,7 +406,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
           count: 1,
         },
       }));
-    } else if (stamp === undefined) {
+    } else if (!isIncluded) {
       dispatch(actions.AddStamp({
         type: type,
         userId: userId,
@@ -413,18 +417,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
           count: 1,
         },
       }));
-    } else if (!stamp.isIncluded) {
-      dispatch(actions.AddStamp({
-        type: type,
-        userId: userId,
-        postId: post.id,
-        stamp: {
-          name: stampName,
-          isIncluded: true,
-          count: 1,
-        },
-      }));
-    } else if (stamp.isIncluded) {
+    } else if (isIncluded) {
       dispatch(actions.RemoveStamp({
         type: type,
         userId: userId,

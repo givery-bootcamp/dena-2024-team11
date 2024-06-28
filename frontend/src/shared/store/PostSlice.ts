@@ -18,7 +18,6 @@ export const postSlice = createSlice({
     initialState,
     reducers: {
         AddStamp: (state, action) => {
-            console.log("add stamp reducer");
             let boardElements: BoardElement[]; //postかreplyの配列
             if(action.payload.type === "post") boardElements = state.posts;
             else if(action.payload.type === "reply") boardElements = state.replies;
@@ -63,6 +62,36 @@ export const postSlice = createSlice({
         },
         RemoveStamp: (state, action) => {
             console.log("remove stamp reducer");
+            let boardElements: BoardElement[];
+            if(action.payload.type === "post") boardElements = state.posts;
+            else if(action.payload.type === "reply") boardElements = state.replies;
+            else boardElements = [];
+            if(boardElements.length === 0) return;
+
+            boardElements = boardElements.map(boardElement => {
+                if(boardElement.id === action.payload.postId) {
+                    const stamps = boardElement.stamps;
+                    let nextStamps = stamps.map(stamp => {
+                        if(stamp.name === action.payload.stamp.name) {
+                            const removedUsers = stamp.users.filter(user => user != action.payload.userId);
+                            return {
+                                name: action.payload.stamp.name,
+                                users: removedUsers,
+                                count: stamp.count - 1,
+                            }
+                        }
+                        return stamp;
+                    });
+                    nextStamps = nextStamps.filter(stamp => stamp.count > 0);
+                    return {
+                        ...boardElement,
+                        stamps: nextStamps,
+                    }
+                }
+                return boardElement;
+            });
+            if(action.payload.type === "post") state.posts = boardElements;
+            else if(action.payload.type === "reply") state.replies = boardElements;
         }
     },
     extraReducers: (builder) => {
