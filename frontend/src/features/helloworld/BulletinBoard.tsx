@@ -127,6 +127,7 @@ export function InputBox({parentId}: InputBoxProps) {
   const [filterText, setFilterText] = useState('');
   const [isHover, setIsHover] = useState(false);
   const dispatch = useAppDispatch();
+  const userId = useAppSelector(state => state.login.user.id);
 
   function onMouseEnter() {
     setIsHover(true);
@@ -141,9 +142,12 @@ export function InputBox({parentId}: InputBoxProps) {
       return;
     }
     if (parentId > -1) {
-      dispatch(APIService.postReply({message: filterText, parentId: parentId}));
+      dispatch(APIService.postReply({message: filterText, parentId: parentId, userId: userId}));
     } else {
-      dispatch(APIService.postBoard(filterText));
+      dispatch(APIService.postBoard({
+        message: filterText, 
+        userId: userId}
+      ));
     }
     setFilterText("");
   }
@@ -211,7 +215,6 @@ export function PostItem({ post, isThread }: PostItemProps) {
       </li>
     )
   });
-  console.log(post);
   return (
         <div className="message-block">
           <img className="message-author-image" src="/images/tanigawa.png"></img>
@@ -258,7 +261,7 @@ export function ReactionButton ({stampName, isIncluded, count, post} : {stampNam
   // const [stampCount, setStampCount] = useState(count);
   const dispatch = useAppDispatch();
   const type = post.parentId === -1 ? "post" : "reply";
-  const userId = 1;
+  const userId = useAppSelector((state) => state.login.user.id);
   function onClick() {
     if (isIncluded) {
       if(type === "post") {
@@ -405,7 +408,7 @@ export function StampItem({stampName, post}: {stampName: string, post: BoardElem
   // const postStamps = useAppSelector((state) => state.stamp.postStamps);
   // const {postStamps, replyStamps} = useAppSelector((state) => state.stamp);
   const type = post.parentId === -1 ? "post" : "reply";
-  const userId = 1;
+  const userId = useAppSelector((state) => state.login.user.id);
   function onClick() {
     // alert(`hello, ${stampName}`);
     //本当はここでストアを評価して、自分が押したかどうかを調べる

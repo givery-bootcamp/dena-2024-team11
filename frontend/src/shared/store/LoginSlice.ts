@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { APIService } from '../services';
+import { LoginState } from '../models';
 
 // import { BoardElement } from '../models';
 
@@ -7,12 +8,13 @@ import { APIService } from '../services';
 //     posts: BoardElement[];
 // };
 
-export type LoginState = {
-    isLogin: boolean;
-};
-
 export const initialState: LoginState = {
     isLogin: false,
+    user: {
+        id: -1,
+        name: "",
+        icon: "",
+    }
 };
 
 export const loginSlice = createSlice({
@@ -22,7 +24,8 @@ export const loginSlice = createSlice({
 
     extraReducers: (builder) => {
         builder.addCase(APIService.loginBoard.fulfilled, (state, action) => {
-            state.isLogin = action.payload;
+            state.isLogin = action.payload.isLogin;
+            state.user = action.payload.user;
         });
         // builder.addCase(APIService.logoutBoard.fulfilled, (state, action) => {
         //     state.isLogin = action.payload;
