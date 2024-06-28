@@ -77,3 +77,19 @@ func (r *StampRepository) RemovePostStamp(postId int, userId int, name string) (
 	return stampedPost.ToEntity(), nil
 }
 
+func (r *StampRepository) RemoveReplyStamp(replyId int, userId int, name string) (*entities.Reply, error) {
+	replyStamp := dao.ReplyStamp{
+		ReplyId: replyId,
+		UserId:  userId,
+		Name:    name,
+	}
+    if err := r.Conn.Where("name = ? AND user_id = ? AND reply_id = ?", name, userId, replyId).Delete(&replyStamp).Error; err != nil {
+        return nil, err
+    }
+
+	var stampedReply dao.Reply
+	if err := r.Conn.Where("id = ?", replyId).Preload("User").Preload("Stamps.User").First(&stampedReply).Error; err != nil {
+		return nil, err
+	}
+	return stampedReply.ToEntity(), nil
+}
