@@ -315,7 +315,6 @@ export const removeStampPost = createAsyncThunk<StampActionPayload, {postId: num
     console.log("post error");
   }
 
-  const getResponseObj = await postResponse.json();
   const payload = {
     type: "post",
     userId: userId,
@@ -347,7 +346,6 @@ export const addStampReply = createAsyncThunk<StampActionPayload, {postId: numbe
     console.log("post error");
   }
 
-  // const getResponseObj = await postResponse.json();
   const payload = {
     type: "reply",
     userId: userId,
