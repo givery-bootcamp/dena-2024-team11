@@ -11,6 +11,11 @@ type DbPost = {
   content: string;
   created_at: string;
   updated_at: string;
+  stamps: {
+    name: string;
+    users: number[];
+    count: number;
+  }[],
   num_replies: number;
 };
 
@@ -24,6 +29,12 @@ type DbReply = {
   content: string;
   created_at: string;
   updated_at: string;
+  stamps: {
+    name: string;
+    users: number[];
+    count: number;
+  }[],
+  num_replies: number;
 }
 
 // console.log(import.meta.env.VITE_NODE_ENV);
@@ -56,9 +67,15 @@ export const getBoard = createAsyncThunk<BoardElement[]>('getBoard', async () =>
     const boardElementData = getResponseObj.map(dbPost => {
       const newElement = {
         id: dbPost.id,
-        name: dbPost.user.name,
+        user: {
+          id: dbPost.user.id,
+          name: dbPost.user.name,
+          icon: dbPost.user.icon,
+        },
         message: dbPost.content,
         parentId: -1,
+        stamps: dbPost.stamps,
+        num_replies: dbPost.num_replies,
       }
       return newElement;
     });
@@ -83,9 +100,15 @@ export const getReplies = createAsyncThunk<BoardElement[], number>('getReplies',
     const boardElementData = getResponseObj.map(dbReply => {
       const newReply = {
         id: dbReply.id,
-        name: dbReply.user.name,
+        user: {
+          id: dbReply.user.id,
+          name: dbReply.user.name,
+          icon: dbReply.user.icon,
+        },
         message: dbReply.content,
-        parentId: parentId,
+        parentId: -1,
+        stamps: dbReply.stamps,
+        num_replies: dbReply.num_replies,
       };
       return newReply;
     })
@@ -128,9 +151,15 @@ export const postBoard = createAsyncThunk<BoardElement[], string>('postBoard',as
     const boardElementData = getResponseObj.map(dbPost => {
       const newElement = {
         id: dbPost.id,
-        name: dbPost.user.name,
+        user: {
+          id: dbPost.user.id,
+          name: dbPost.user.name,
+          icon: dbPost.user.icon,
+        },
         message: dbPost.content,
         parentId: -1,
+        stamps: dbPost.stamps,
+        num_replies: dbPost.num_replies,
       }
       return newElement;
     })
@@ -173,9 +202,15 @@ export const postReply = createAsyncThunk<BoardElement[], {message: string; pare
   const boardElementData = getResponseObj.map(dbReply => {
     const newReply = {
       id: dbReply.id,
-      name: dbReply.user.name,
-      message: dbReply.content,
-      parentId: parentId,
+        user: {
+          id: dbReply.user.id,
+          name: dbReply.user.name,
+          icon: dbReply.user.icon,
+        },
+        message: dbReply.content,
+        parentId: -1,
+        stamps: dbReply.stamps,
+        num_replies: dbReply.num_replies,
     };
     return newReply;
   })
