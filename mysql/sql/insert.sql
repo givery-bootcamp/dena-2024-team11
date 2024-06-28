@@ -14,3 +14,10 @@ INSERT INTO post_stamps (name, user_id, post_id) VALUES ("bad", 1, 1);
 INSERT INTO post_stamps (name, user_id, post_id) VALUES ("bad", 2, 1);
 INSERT INTO post_stamps (name, user_id, post_id) VALUES ("soso", 1, 1);
 INSERT INTO post_stamps (name, user_id, post_id) VALUES ("notgood", 2, 1);
+
+INSERT INTO reply_stamps (name, user_id, reply_id) VALUES ("good", 1, 1);
+INSERT INTO reply_stamps (name, user_id, reply_id) VALUES ("good", 1, 2);
+INSERT INTO reply_stamps (name, user_id, reply_id) VALUES ("bad", 1, 1);
+INSERT INTO reply_stamps (name, user_id, reply_id) VALUES ("bad", 2, 1);
+INSERT INTO reply_stamps (name, user_id, reply_id) VALUES ("soso", 1, 1);
+INSERT INTO reply_stamps (name, user_id, reply_id) VALUES ("notgood", 2, 1);

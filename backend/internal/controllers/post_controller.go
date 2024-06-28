@@ -19,7 +19,7 @@ func GetPosts(ctx *gin.Context) {
 
 		res := response.GetPostsResponse{}
 		for _, post := range posts {
-			stamps := convertPostStampsToStamps(post.Stamps)
+			stamps := EntityStampsToResponse(post.Stamps)
 			res = append(res, response.NewPostResponse(post, len(post.Replies), stamps))
 		}
 		ctx.JSON(200, res)
@@ -41,13 +41,13 @@ func PostPosts(ctx *gin.Context) {
 		return
 	}
 
-	stamps := convertPostStampsToStamps(post.Stamps)
+	stamps := EntityStampsToResponse(post.Stamps)
 	ctx.JSON(201, response.NewPostResponse(post, len(post.Replies), stamps))
 }
 
-func convertPostStampsToStamps(postStamps []*entities.Stamp) []response.Stamp {
+func EntityStampsToResponse(entityStamps []*entities.Stamp) []response.Stamp {
     stampMap := make(map[string]map[int]struct{})
-    for _, ps := range postStamps {
+    for _, ps := range entityStamps {
         key := ps.Name
         if _, exists := stampMap[key]; !exists {
             stampMap[key] = make(map[int]struct{})
@@ -55,17 +55,17 @@ func convertPostStampsToStamps(postStamps []*entities.Stamp) []response.Stamp {
         stampMap[key][ps.User.Id] = struct{}{}
     }
 
-    var stamps []response.Stamp
+    var respStamps []response.Stamp
     for name, users := range stampMap {
         userIds := make([]int, 0, len(users))
         for userId := range users {
             userIds = append(userIds, userId)
         }
-        stamps = append(stamps, response.Stamp{
+        respStamps = append(respStamps, response.Stamp{
             Name:    name,
             UserIds: userIds,
             Count:   len(userIds),
         })
     }
-    return stamps
+    return respStamps
 }
