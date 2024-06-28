@@ -267,7 +267,6 @@ export const loginBoard = createAsyncThunk<LoginState, {userId: string; password
 });
 
 export const addStampPost = createAsyncThunk<StampActionPayload, {postId: number; userId: number, stampName: string}>('addStampPost', async ({postId, userId, stampName})=> {
-  console.log("stampname " + stampName);
   const postResponse = await fetch(`${API_ENDPOINT_PATH}/stamp/add/post`, {
     method: 'POST',
     headers: {

@@ -152,7 +152,6 @@ export const postSlice = createSlice({
         });
 
         builder.addCase(APIService.removeStampPost.fulfilled, (state, action) => {
-            console.log("remove stamp reducer");
             let boardElements: BoardElement[];
             if(action.payload.type === "post") boardElements = state.posts;
             else if(action.payload.type === "reply") boardElements = state.replies;
