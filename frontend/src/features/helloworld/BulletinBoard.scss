@@ -1,0 +1,434 @@
+.bulletin-with-thread {
+    display: flex;
+};
+
+.post-list {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.message-block {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding-bottom: 10px;
+    gap: 10px;
+    
+    position: relative;
+    width: 300px;
+    // height: 120px;
+}
+
+.message-author-image {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.message-not-image-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 5px;
+    
+    width: 210px;
+    // height: 99px;
+    
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.message-author-name {
+    height: 15px;
+    
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 13px;
+    line-height: 15px;
+    
+    color: #000000;
+    
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.message-message {
+    width: 195px;
+    height: 13px;
+    
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 14px;
+    margin-top: 2px;
+    
+    color: #000000;
+    
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.message-stamp-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    margin-top: 5px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+}
+
+.message-stamp-image {
+    // width: 50px;
+    height: 30px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}    
+
+.message-stamp-add {
+    width: 46px;
+    height: 26px;
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.message-reply-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 5px;
+    
+    width: 100px;
+    height: 39px;
+    
+    /* Inside auto layout */
+    flex: none;
+    order: 3;
+    flex-grow: 0;
+}
+
+.message-reply-image1 {
+    width: 24px;
+    height: 26px;
+    
+    border-radius: 6px;
+    
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.message-reply-image2 {
+    width: 24px;
+    height: 26px;
+    
+    border-radius: 6px;
+    
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.message-reply-button {
+    height: 16px;
+    
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 19px;
+    display: flex;
+    align-items: center;
+    
+    color: #5883C3;
+    
+    // border: 1px solid #FFFCFC;
+    border: none;
+    background: transparent;
+    
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+}
+
+.message-reply-button:hover {
+    text-decoration: underline;
+    color: #2f5da2;
+}
+
+// .reaction-button {
+//     /* slack-stamp */
+
+//     /* Auto layout */
+//     display: flex;
+//     flex-direction: row;
+//     justify-content: center;
+//     align-items: center;
+//     // padding: 10px 5px;
+//     gap: 11px;
+
+//     position: relative;
+//     width: 40px;
+//     height: 20px;
+
+//     background: #F4F4F4;
+//     border: 1px solid #226EA9;
+//     border-radius:10px;
+// }
+
+// .emoji-block {
+
+//     /* 絵文_字。 1 */
+
+//     width: 16px;
+//     height: 16px;
+
+//     /* Inside auto layout */
+//     flex: none;
+//     order: 0;
+//     flex-grow: 0;
+
+
+//     /* 1 */
+
+//     width: 16px;
+//     height: 16px;
+
+//     font-family: 'Inter';
+//     font-style: normal;
+//     font-weight: 400;
+//     font-size: 80px;
+//     line-height: 97px;
+//     display: flex;
+//     align-items: center;
+//     text-align: center;
+
+//     color: #000000;
+
+
+//     /* Inside auto layout */
+//     flex: none;
+//     order: 1;
+//     flex-grow: 0;
+// }
+
+
+.stamp-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 3.72093px 8.5px;
+    gap: 3px;
+
+    position: relative;
+    //width: 46px;
+    height: 27px;
+    border-radius: 13px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    border: none;
+}
+
+.add-stamp {
+    background: #f2f2f2;
+    border: 1.3px solid #ffffff;
+}
+
+.add-stamp:hover {
+    border: 1.3px solid #616161;
+    background: #fbfbfb;
+}
+
+.before-click-stamp {
+    // display: flex;
+    // flex-direction: row;
+    // justify-content: center;
+    // align-items: center;
+    // padding: 3.72093px 8.5px;
+    // gap: 3px;
+
+    // position: relative;
+    // height: 27px;
+    // border-radius: 13px;
+    // margin-right: 2px;
+    // margin-bottom: 2px;
+
+    background: #f2f2f2;
+    border: 1.3px solid #ffffff;
+}
+
+.before-click-stamp:hover {
+    border: 1.3px solid #616161;
+    background: #fbfbfb;
+}
+
+.scalable-button:active {
+    -webkit-transform: scale(0.95);
+	-moz-transform: scale(0.95);
+	transform: scale(0.95);
+}
+
+.after-click-stamp {
+    box-sizing: border-box;
+    /* Auto layout */
+    // display: flex;
+    // flex-direction: row;
+    // justify-content: center;
+    // align-items: center;
+    // padding: 3.72093px 8.5px;
+    // gap: 3px;
+
+    // position: relative;
+    // height: 27px;
+    // border-radius: 13px;
+    // margin-right: 2px;
+    // margin-bottom: 2px;
+
+    background: #DCF4FC;
+    border: 1.3px solid #226EA9;
+}
+
+.emoji-block {
+    /* 絵文_字。 1 */
+
+    width: 17px;
+    height: 17px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.before-click-count-block {
+    width: 9.44px;
+    height: 13.95px;
+
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+    color: #252525;
+
+    /* Inside auto layout */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.after-click-count-block{
+    /* 2 */
+
+    width: 9.44px;
+    height: 13.95px;
+
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+    color: #0c5893;
+
+    /* Inside auto layout */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.message-stamp-list {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    // background-color: rgba(0,0,0,0.5);
+    border: none;
+    z-index: 9000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-modal {
+    position: absolute;
+    // top: 100px;
+    // left: 200px;
+    // width: 300px;
+    // height: 500px;
+    z-index: 9999;
+    background-color: white;
+    border: 0.2px solid #bbbbbb;
+    box-shadow: 2px 2px 2px rgb(195, 195, 195);
+    border-radius: 10px;
+}
+
+.modal-stamp-list {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.stamp-item-button {
+    border: none;
+    background: transparent;
+    transition: 0.4s;
+    border-radius: 10px;
+}
+
+.stamp-item-button:hover {
+    background:rgb(195, 195, 195);
+    transition: 0.1s;
+}
+
+.stamp-item-image {
+    width: 50px;
+    height: 50px;
+}
