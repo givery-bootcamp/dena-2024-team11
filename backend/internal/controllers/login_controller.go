@@ -19,8 +19,10 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
+	log.Println("req:", req)
+
 	loginRepository := repositories.NewLoginRepository(DB(ctx))
-	result, err := loginRepository.Login(req.UserId)
+	result, err := loginRepository.Login(req.Email)
 	if err != nil {
 		handleError(ctx, 404, err)
 	}
@@ -37,12 +39,11 @@ func Login(ctx *gin.Context) {
 	userId := result.Id
 	sessionRepository := repositories.NewSessionRepository(Redis(ctx))
 	if err := sessionRepository.Set(ctx, sessionId.String(), userId); err != nil {
-		log.Println("小池")
 		handleError(ctx, 500, err)
 		return
 	}
 	userRepository := repositories.NewUserRepository(DB(ctx))
-	user ,err := userRepository.FindByIdUser(userId)
+	user, err := userRepository.FindByIdUser(userId)
 	if err != nil {
 		handleError(ctx, 500, err)
 		return
@@ -56,7 +57,7 @@ func Login(ctx *gin.Context) {
 		Path:     "/",
 		MaxAge:   3600,
 	}
-	res :=response.NewUserResponse(user)
+	res := response.NewUserResponse(user)
 	ctx.SetSameSite(http.SameSiteNoneMode)
 	http.SetCookie(ctx.Writer, cookie)
 	ctx.JSON(200, res)
