@@ -32,6 +32,37 @@ export function BulletinBoard() {
   const showModal = useAppSelector((state) => state.modal.showModal);
   const modalInfo = useAppSelector((state) => state.modal.modalInfo);
   const dispatch = useAppDispatch();
+  const stamps = [
+    "saikou", 
+    "akebono", 
+    "madamada",
+    "emoji",
+    "yonezawa",
+    "gyokairui",
+    "nigeteiiyo",
+    "tamanegi",
+    "togyushi",
+    "shishamo",
+    "curtain",
+    "radiotaisou",
+    "huyuhanabe",
+    "toripaitan",
+    "nureginu",
+    "nurumenoonsen",
+    "yonsama",
+    "mokkouyoubondo",
+    "kochujan",
+    "itiran",
+    "sonnanokankeinee",
+    "sorehakankeiaru",
+    "kinouhagomen",
+    "tuyomenopanti",
+    "zukounosensei",
+    "kodomogatabeteru",
+    "totyuudesyouga",
+    "obondegohan",
+    "zaurusu"
+  ];
   useEffect(() => {
     dispatch(APIService.getBoard());
     if (selectedThreadId === null) {
@@ -39,19 +70,33 @@ export function BulletinBoard() {
     }
     dispatch(APIService.getReplies(selectedThreadId));
   }, [dispatch]);
+
+  const ref = useRef<HTMLDivElement>(null);
+
   return (
-    <div>
-      {showModal && <AddStampModal stamps={["saikou", "akebono", "madamada"]} modalInfo={modalInfo}/>}
+    <div className="board-with-modal">
+      {showModal && <AddStampModal stamps={stamps} modalInfo={modalInfo}/>}
       <div className="bulletin-with-thread">
         <div className="bulletin-board">
-          <PostList posts={noparents}/>
-          <InputBox parentId={-1}/>
+          <div className="scroll-board" ref={ref}>
+            <PostList posts={noparents}/>
+          </div>
+          <div className="input-areà">
+            <InputBox parentId={-1}/>
+          </div>
         </div>
-        <div>
-          <PostList posts={parentPost} isThread={true}/>
-          <PostList posts={childs} />
-          <InputBox parentId={selectedThreadId}/>        
-        </div>
+        { (selectedThreadId !== null) && (
+          <div className="bulletin-thread" >
+            <div className="thread-title">スレッド</div>
+            <PostList posts={parentPost} isThread={true}/>
+            <div className="reply-line">
+              <div className="reply-line-text">{childs.length.toString()} 件の返信</div>
+              <hr className="border-line"/>
+            </div>
+            <PostList posts={childs} />
+            <InputBox parentId={selectedThreadId}/>        
+         </div> 
+        )}
       </div>
     </div>
   );
@@ -76,7 +121,16 @@ export function PostList({ posts, isThread = false }: PostProps) {
 
 export function InputBox({parentId}: InputBoxProps) {
   const [filterText, setFilterText] = useState('');
+  const [isHover, setIsHover] = useState(false);
   const dispatch = useAppDispatch();
+
+  function onMouseEnter() {
+    setIsHover(true);
+  }
+  function onMouseLeave() {
+    setIsHover(false);
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (parentId === null) {
@@ -93,26 +147,24 @@ export function InputBox({parentId}: InputBoxProps) {
     return <div></div>;
   } 
   return (
-    <form onSubmit={handleSubmit}>
-    <input 
-      type="text" 
-      value={filterText} 
-      placeholder="Search..."
-      onChange={(e) => setFilterText(e.target.value)}
-    />
-    <input
-      type="submit"
-      value="Submit"
-    />
-      
-    {/* <label>
-      <input 
-        type="checkbox" 
-        checked={inStockOnly} />
-      {' '}
-      Only show products in stock
-    </label> */}
-  </form>
+    <form className="input-form" onSubmit={handleSubmit}>
+      <input
+        className="input-text"
+        //rows={1}
+        type="text"
+        value={filterText} 
+        placeholder="Srackへのメッセージ"
+        onChange={(e) => setFilterText(e.target.value)}
+      />
+      <input
+        className="submit-button"
+        type="image"
+        name="submit"
+        src={"images/submit" + (isHover ? "_hover" : "") + ".png"}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      />
+    </form>
   );
 }
 
@@ -152,7 +204,7 @@ export function PostItem({ post, isThread }: PostItemProps) {
         <ReactionButton str={stamp.name} isIncluded={stamp.isIncluded} count={stamp.count} post={post}/>
       </li>
     )
-  })
+  });
 
   return (
         <div className="message-block">
@@ -282,7 +334,7 @@ export function AddStampModal({stamps, modalInfo}: {stamps: string[], modalInfo:
   const modalWidth = 300;
   const modalHeight = 500;
   const modalTop = Math.max(modalInfo.position.top - modalHeight - 10 + window.scrollY, 10 + window.scrollY);
-  const modalLeft = Math.min(modalInfo.position.left + window.scrollX, 2000 + window.scrollX);
+  const modalLeft = Math.min(modalInfo.position.left + window.scrollX + 100, window.innerWidth - modalWidth - 10 + window.scrollX);
   const reactionButtons = stamps.map((reaction, index) => {
     return (
       modalInfo.post && 
