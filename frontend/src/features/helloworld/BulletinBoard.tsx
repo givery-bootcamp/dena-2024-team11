@@ -222,7 +222,6 @@ export function PostItem({ post, isThread }: PostItemProps) {
           <img className="message-author-image" src={post.user.icon || "/images/tanigawa.png"}></img>
           <div className="message-not-image-block">
             <div className="message-author-name">
-              {post.id} -&gt; {post.parentId}: 
               {post.user.name}
             </div>
             <div className="message-message">

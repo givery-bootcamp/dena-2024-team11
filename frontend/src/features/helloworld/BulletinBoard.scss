@@ -522,9 +522,10 @@ body {
 }
 .border-line {
     flex-grow: 1;
-    border-top: 1px solid rgb(49, 49, 49);
+    border: 0.05px solid rgb(220, 220, 220);
     // margin-left: 5%;
     margin-right: 5%;
+    // height: 0px;
 }
 
 .input-form {
